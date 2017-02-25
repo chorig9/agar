@@ -17,7 +17,7 @@ public class Game extends ApplicationAdapter{
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		img = new Texture("core/assets/badlogic.jpg");
         sprite = new Sprite(img);
         posX = Gdx.graphics.getWidth() / 2 - sprite.getWidth() / 2;
         posY = Gdx.graphics.getHeight() / 2 - sprite.getHeight() / 2;
