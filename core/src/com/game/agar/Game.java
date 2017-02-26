@@ -22,10 +22,10 @@ public class Game extends ApplicationAdapter{
 	public void create () {
 		batch = new SpriteBatch();
 
-        playerTexture = new Texture("badlogic.jpg");
+        playerTexture = new Texture("core/assets/badlogic.jpg");
         sprite = new Sprite(playerTexture);
 
-        ballTexture = new Texture("object.png");
+        ballTexture = new Texture("core/assets/object.png");
         ball = new Sprite(ballTexture);
 
         width = Gdx.graphics.getWidth();
