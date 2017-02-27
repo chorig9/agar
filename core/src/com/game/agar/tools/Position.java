@@ -2,9 +2,9 @@ package com.game.agar.tools;
 
 public class Position {
 
-    public double x, y;
+    public float x, y;
 
-    public Position(double x, double y){
+    public Position(float x, float y){
         this.x = x;
         this.y = y;
     }
