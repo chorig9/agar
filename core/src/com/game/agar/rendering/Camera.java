@@ -5,20 +5,7 @@ import com.game.agar.tools.Position;
 
 public class Camera {
 
-    private Position position;
-    private double zoom;
+    public Position position;
+    public double zoom;
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public double getZoom() {
-        return zoom;
-    }
-
-    public void setZoom(double zoom) {
-        this.zoom = zoom;
-    }
-
-    //TODO...
 }
