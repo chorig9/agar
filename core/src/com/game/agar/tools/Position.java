@@ -1,4 +1,4 @@
-package com.game.agar;
+package com.game.agar.tools;
 
 public class Position {
 
