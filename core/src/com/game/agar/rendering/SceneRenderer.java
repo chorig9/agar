@@ -3,23 +3,24 @@ package com.game.agar.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.game.agar.entities.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SceneRenderer implements IRenderer{
 
-    private List<Entity> entities = new ArrayList<>();
-    private Camera camera = new Camera();
+    private List<Entity> entities;
+    private Camera camera;
     private SpriteBatch batch;
+
+    public SceneRenderer(Camera camera, List<Entity> entities){
+        this.camera = camera;
+        this.entities = entities;
+    }
 
     @Override
     public void init() {
         batch = new SpriteBatch();
-    }
-
-    public void addEntity(Entity entity){
-        entities.add(entity);
     }
 
     @Override
@@ -30,13 +31,13 @@ public class SceneRenderer implements IRenderer{
         batch.setTransformMatrix(camera.getMatrix());
         batch.begin();
         {
-            entities.forEach(entity -> renderModel(entity.getModel()));
+            entities.forEach(this::renderEntity);
         }
         batch.end();
     }
 
-    private void renderModel(Model model){
-        //TODO...
+    private void renderEntity(Entity entity){
+        entity.getSprite().draw(batch);
     }
 
     @Override
