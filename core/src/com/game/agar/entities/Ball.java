@@ -18,5 +18,6 @@ public class Ball extends Entity {
         Texture texture = new Texture(pixmap);
 
         sprite = new Sprite(texture);
+        offset = 8;
     }
 }
