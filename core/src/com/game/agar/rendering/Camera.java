@@ -34,8 +34,15 @@ public class Camera {
         float x = width / 2.f;
         float y = height / 2.f;
 
-        // centering object and translating accordingly to camera position and zoom
-        translation.setToTranslation(x - zoom * x - (position.x - x) * zoom, y - zoom * y - (position.y -y )* zoom, 0);
+        // scaling around (width / 2, height / 2) point
+        float centeringX = x - zoom * x;
+        float centeringY = y - zoom * y;
+
+        // translation accordingly to camera position and zoom
+        float translationX = -(position.x - x) * zoom;
+        float translationY = -(position.y - y) * zoom;
+
+        translation.setToTranslation(centeringX + translationX, centeringY + translationY, 0);
         matrix = translation.mul(matrix);
 
         return matrix;

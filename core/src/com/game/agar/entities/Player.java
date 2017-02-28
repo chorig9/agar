@@ -20,7 +20,6 @@ public class Player extends Entity {
         Texture texture = new Texture(pixmap);
 
         sprite = new Sprite(texture);
-        offset = 16;
     }
 
     public void setMovingDirection(double angle){
