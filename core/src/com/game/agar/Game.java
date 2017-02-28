@@ -1,7 +1,9 @@
 package com.game.agar;
 
 import com.badlogic.gdx.*;
+import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
+import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
 import com.game.agar.entities.Entity;
 import com.game.agar.rendering.IRenderer;
@@ -14,46 +16,40 @@ import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter{
 
-	//using the example renderer for presentation purposes
 	private IRenderer renderer;
-	private Controller controller;
-	List<Entity> entities;
+	private Camera camera;
+	private List<Entity> entities;
+
+	private Player player;
 
 	@Override
 	public void create () {
-		Camera camera = new Camera();
+		camera = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		entities = new ArrayList<>();
-		controller = new Controller();
-		Gdx.input.setInputProcessor(controller);
-		Ball ball = new Ball(new Position(300,300));
-		entities.add(ball);
+
+		// TESTING
+		entities.add(new Ball(new Position(10,10)));
+		entities.add(new Ball(new Position(100,10)));
+		entities.add(new Ball(new Position(10,100)));
+		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ));
+		entities.add(player);
+
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
+
+		Gdx.input.setInputProcessor(new Controller(camera, player));
     }
 
 	@Override
 	public void render () {
-		update();
+		player.move(1);
+		camera.setPosition(player.getPosition());
+
 		renderer.renderFrame();
 	}
 
 	@Override
 	public void dispose () {
 		renderer.dispose();
-	}
-	
-	public void update (){
-		Position targetPosition = controller.getMousePosition();
-		for (Entity entity: entities) {
-			Position currentEntityPosition = entity.getPosition();
-			double theta = Math.atan2(targetPosition.y-currentEntityPosition.y,targetPosition.x-currentEntityPosition.x);
-			double dx = 0.5*Math.cos(theta);
-			double dy = 0.5*Math.sin(theta);
-			if(!currentEntityPosition.equals(targetPosition)){
-				currentEntityPosition.x += dx;
-				currentEntityPosition.y += dy;
-			}
-			entity.getSprite();
-		}
 	}
 }

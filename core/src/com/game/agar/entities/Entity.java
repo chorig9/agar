@@ -22,7 +22,7 @@ public abstract class Entity {
     }
 
     public Sprite getSprite() {
-        sprite.setPosition(position.x, position.y);
+        sprite.setPosition(position.x - sprite.getWidth() / 2, position.y - sprite.getHeight() / 2);
         return sprite;
     }
 }

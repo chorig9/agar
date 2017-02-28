@@ -3,7 +3,9 @@ package com.game.agar.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.game.agar.entities.Entity;
+import com.game.agar.entities.Player;
 
 import java.util.List;
 
