@@ -27,7 +27,6 @@ public class SceneRenderer implements IRenderer{
     public void renderFrame() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         batch.setTransformMatrix(camera.getMatrix());
         batch.begin();
         {

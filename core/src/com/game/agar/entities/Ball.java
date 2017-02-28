@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.game.agar.tools.Position;
 
 public class Ball extends Entity {
-
+    private int radius;
     public Ball(Position position) {
 
         super(position, null);
-
+        radius = 5;
         Pixmap pixmap = new Pixmap(16,16, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.GREEN);
         pixmap.fillCircle(8,8,8);
