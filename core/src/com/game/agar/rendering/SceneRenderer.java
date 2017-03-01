@@ -1,8 +1,10 @@
 package com.game.agar.rendering;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.game.agar.entities.Entity;
 import com.game.agar.entities.Player;
@@ -13,7 +15,7 @@ public class SceneRenderer implements IRenderer{
 
     private List<Entity> entities;
     private Camera camera;
-    private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
 
     public SceneRenderer(Camera camera, List<Entity> entities){
         this.camera = camera;
@@ -22,7 +24,7 @@ public class SceneRenderer implements IRenderer{
 
     @Override
     public void init() {
-        batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -30,21 +32,23 @@ public class SceneRenderer implements IRenderer{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setTransformMatrix(camera.getMatrix());
-        batch.begin();
+        shapeRenderer.setTransformMatrix(camera.getMatrix());
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         {
+            shapeRenderer.setColor(Color.BLUE);
             entities.forEach(this::renderEntity);
         }
-        batch.end();
+        shapeRenderer.end();
     }
 
     private void renderEntity(Entity entity){
-        entity.getSprite().draw(batch);
+        shapeRenderer.setColor(entity.getColor());
+        shapeRenderer.circle(entity.getPosition().x,entity.getPosition().y,entity.getRadius());
     }
 
     @Override
     public void dispose(){
-        batch.dispose();
+        shapeRenderer.dispose();
     }
 
 }

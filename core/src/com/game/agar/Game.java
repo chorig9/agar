@@ -10,6 +10,7 @@ import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.tools.Position;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -28,10 +29,10 @@ public class Game extends ApplicationAdapter{
 		entities = new ArrayList<>();
 
 		// TESTING
-		entities.add(new Ball(new Position(10,10)));
-		entities.add(new Ball(new Position(100,10)));
-		entities.add(new Ball(new Position(10,100)));
-		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ));
+		entities.add(new Ball(new Position(10,10),100));
+		entities.add(new Ball(new Position(100,10),200));
+		entities.add(new Ball(new Position(10,100),300));
+		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ),350);
 		entities.add(player);
 
 		renderer = new SceneRenderer(camera, entities);
@@ -43,13 +44,27 @@ public class Game extends ApplicationAdapter{
 	@Override
 	public void render () {
 		player.move(1);
+		update();
 		camera.setPosition(player.getPosition());
-
 		renderer.renderFrame();
 	}
 
 	@Override
 	public void dispose () {
 		renderer.dispose();
+	}
+
+
+	public void update() {
+		List <Entity> toDelete = new ArrayList<>();
+		for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+			Entity currentEntity = it.next();
+			if (!currentEntity.equals(player)) {
+				if (currentEntity.isCollision(player)) {
+					toDelete.add(currentEntity.getEatenEntity(player));
+				}
+			}
+		}
+		entities.removeAll(toDelete);
 	}
 }
