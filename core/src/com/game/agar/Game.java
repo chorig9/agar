@@ -11,9 +11,7 @@ import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.tools.Position;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,6 +41,16 @@ public class Game extends ApplicationAdapter{
 		renderer.init();
 
 		Gdx.input.setInputProcessor(new Controller(camera, player));
+
+// Position converging testing
+//		Timer timer = new Timer();
+//		TimerTask growth = new TimerTask() {
+//			@Override
+//			public void run() {
+//				player.move(10);
+//			}
+//		};
+//		timer.schedule(growth, 0, 250);
     }
 
 	@Override
@@ -50,7 +58,7 @@ public class Game extends ApplicationAdapter{
 		player.move(1);
 
 		update();
-		camera.setPosition(player.getPosition());
+		camera.setPosition(player.getDrawingPosition());
 		renderer.renderFrame();
 	}
 
