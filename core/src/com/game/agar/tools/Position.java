@@ -18,4 +18,8 @@ public class Position {
             return p.x == x && p.y == y;
         }
     }
+
+    public Position copy(){
+        return new Position(x, y);
+    }
 }
