@@ -35,7 +35,6 @@ public class SceneRenderer implements IRenderer{
         shapeRenderer.setTransformMatrix(camera.getMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         {
-            shapeRenderer.setColor(Color.BLUE);
             entities.forEach(this::renderEntity);
         }
         shapeRenderer.end();
