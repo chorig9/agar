@@ -16,17 +16,17 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 
 public class Game extends ApplicationAdapter{
 
 	private IRenderer renderer;
 	private Camera camera;
-	private Handler handler;
+    private Handler handler;
+	private List<Entity> entities;
 
 	private Player player;
-	private List<Entity> entities;
 	private final Queue<ITask> tasks = new ArrayBlockingQueue<>(10);
 
 	@Override
@@ -35,10 +35,10 @@ public class Game extends ApplicationAdapter{
 		entities = new ArrayList<>();
 
 		// TESTING
-		entities.add(new Ball(new Position(10,10)));
-		entities.add(new Ball(new Position(100,10)));
-		entities.add(new Ball(new Position(10,100)));
-		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ));
+		entities.add(new Ball(new Position(10,10),100));
+		entities.add(new Ball(new Position(100,10),200));
+		entities.add(new Ball(new Position(10,100),300));
+		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ),350);
 		entities.add(player);
 
 		renderer = new SceneRenderer(camera, entities);
@@ -68,6 +68,8 @@ public class Game extends ApplicationAdapter{
 
 		// move player and camera
 		player.move(1);
+
+		update();
 		camera.setPosition(player.getPosition());
 
 		renderer.renderFrame();
@@ -76,5 +78,12 @@ public class Game extends ApplicationAdapter{
 	@Override
 	public void dispose () {
 		renderer.dispose();
+	}
+
+	private void update() {
+		Predicate<Entity> isEntityColliding = entity -> !entity.equals(player) && entity.isCollision(player);
+
+		entities.stream().filter(isEntityColliding).forEach(entity -> player.eat(entity));
+		entities.removeIf(isEntityColliding);
 	}
 }

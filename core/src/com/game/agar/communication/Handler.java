@@ -49,7 +49,7 @@ public class Handler {
         switch(action){
             case "add":
                 Position position = new Position(json.getInt("x"), json.getInt("y"));
-                game.addTask(() -> entities.add(new Ball(position)));
+                game.addTask(() -> entities.add(new Ball(position, 10)));
                 break;
             // TODO
         }
