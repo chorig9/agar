@@ -1,6 +1,5 @@
 package com.game.agar.communication;
 
-import com.game.agar.Game;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
 import com.game.agar.tools.Position;
@@ -17,11 +16,9 @@ public class Handler {
     private Consumer<Exception> connectionErrorCallback;
 
     private List<Entity> entities;
-    private Game game;
 
-    public Handler(List<Entity> entities, Game game, Consumer<Exception> connectionErrorCallback) {
+    public Handler(List<Entity> entities, Consumer<Exception> connectionErrorCallback) {
         this.entities = entities;
-        this.game = game;
         this.connectionErrorCallback = connectionErrorCallback;
 
         try{
@@ -49,7 +46,7 @@ public class Handler {
         switch(action){
             case "add":
                 Position position = new Position(json.getInt("x"), json.getInt("y"));
-                game.addTask(() -> entities.add(new Ball(position, 10)));
+                entities.add(new Ball(position, 100));
                 break;
             // TODO
         }

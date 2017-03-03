@@ -9,13 +9,10 @@ import com.game.agar.rendering.Camera;
 import com.game.agar.entities.Entity;
 import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
-import com.game.agar.tools.ITask;
 import com.game.agar.tools.Position;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Predicate;
 
 
@@ -27,7 +24,6 @@ public class Game extends ApplicationAdapter{
 	private List<Entity> entities;
 
 	private Player player;
-	private final Queue<ITask> tasks = new ArrayBlockingQueue<>(10);
 
 	@Override
 	public void create () {
@@ -44,28 +40,17 @@ public class Game extends ApplicationAdapter{
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
-		handler = new Handler(entities, this, this::handleError);
+		handler = new Handler(entities, this::handleError);
 
 		Gdx.input.setInputProcessor(new Controller(camera, player));
     }
 
     private void handleError(Exception error){
-		// TODO
 		error.printStackTrace();
-	}
-
-	public void addTask(ITask task){
-		tasks.add(task);
 	}
 
 	@Override
 	public void render () {
-		// run all queued tasks
-		synchronized(tasks) {
-			tasks.forEach(ITask::run);
-			tasks.clear();
-		}
-
 		// move player and camera
 		player.move(1);
 
