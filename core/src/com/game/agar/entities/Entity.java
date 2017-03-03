@@ -7,7 +7,6 @@ public abstract class Entity {
 
     Position position;
     Sprite sprite;
-    float offset = 0;
 
     Entity(Position position, Sprite sprite){
         this.position = position;
@@ -23,7 +22,7 @@ public abstract class Entity {
     }
 
     public Sprite getSprite() {
-        sprite.setPosition(position.x - offset, position.y - offset);
+        sprite.setPosition(position.x - sprite.getWidth() / 2, position.y - sprite.getHeight() / 2);
         return sprite;
     }
 }

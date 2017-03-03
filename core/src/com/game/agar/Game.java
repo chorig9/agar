@@ -1,6 +1,7 @@
 package com.game.agar;
 
 import com.badlogic.gdx.*;
+import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Player;
@@ -8,19 +9,25 @@ import com.game.agar.rendering.Camera;
 import com.game.agar.entities.Entity;
 import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
+import com.game.agar.tools.ITask;
 import com.game.agar.tools.Position;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.function.Consumer;
 
 
 public class Game extends ApplicationAdapter{
 
 	private IRenderer renderer;
 	private Camera camera;
-	private List<Entity> entities;
+	private Handler handler;
 
 	private Player player;
+	private List<Entity> entities;
+	private final Queue<ITask> tasks = new ArrayBlockingQueue<>(10);
 
 	@Override
 	public void create () {
@@ -37,11 +44,29 @@ public class Game extends ApplicationAdapter{
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
+		handler = new Handler(entities, this, this::handleError);
+
 		Gdx.input.setInputProcessor(new Controller(camera, player));
     }
 
+    private void handleError(Exception error){
+		// TODO
+		error.printStackTrace();
+	}
+
+	public void addTask(ITask task){
+		tasks.add(task);
+	}
+
 	@Override
 	public void render () {
+		// run all queued tasks
+		synchronized(tasks) {
+			tasks.forEach(ITask::run);
+			tasks.clear();
+		}
+
+		// move player and camera
 		player.move(1);
 		camera.setPosition(player.getPosition());
 
