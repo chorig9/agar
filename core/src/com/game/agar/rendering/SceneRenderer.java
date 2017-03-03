@@ -31,7 +31,6 @@ public class SceneRenderer implements IRenderer{
     public void renderFrame() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         shapeRenderer.setTransformMatrix(camera.getMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         {
@@ -42,7 +41,7 @@ public class SceneRenderer implements IRenderer{
 
     private void renderEntity(Entity entity){
         shapeRenderer.setColor(entity.getColor());
-        shapeRenderer.circle(entity.getPosition().x,entity.getPosition().y,entity.getRadius());
+        shapeRenderer.circle(entity.getDrawingPosition().x,entity.getDrawingPosition().y,entity.getRadius());
     }
 
     @Override
