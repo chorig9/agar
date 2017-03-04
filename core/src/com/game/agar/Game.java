@@ -1,6 +1,7 @@
 package com.game.agar;
 
 import com.badlogic.gdx.*;
+import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Player;
@@ -9,11 +10,12 @@ import com.game.agar.entities.Entity;
 import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.tools.Position;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Predicate;
 
 
@@ -21,6 +23,7 @@ public class Game extends ApplicationAdapter{
 
 	private IRenderer renderer;
 	private Camera camera;
+    private Handler handler;
 	private List<Entity> entities;
 
 	private Player player;
@@ -40,6 +43,8 @@ public class Game extends ApplicationAdapter{
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
+		handler = new Handler(entities, this::handleError);
+
 		Gdx.input.setInputProcessor(new Controller(camera, player));
 
 // Position converging testing
@@ -53,8 +58,13 @@ public class Game extends ApplicationAdapter{
 //		timer.schedule(growth, 0, 250);
     }
 
+    private void handleError(Exception error){
+		error.printStackTrace();
+	}
+
 	@Override
 	public void render () {
+		// move player and camera
 		player.move(1);
 
 		update();
@@ -66,7 +76,6 @@ public class Game extends ApplicationAdapter{
 	public void dispose () {
 		renderer.dispose();
 	}
-
 
 	private void update() {
 		Predicate<Entity> isEntityColliding = entity -> !entity.equals(player) && entity.isCollision(player);
