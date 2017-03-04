@@ -48,8 +48,8 @@ public abstract class Entity {
     }
 
     public boolean isCollision(Entity collidingObject){
-        double dx = Math.abs(this.realPosition.x - collidingObject.realPosition.x);
-        double dy = Math.abs(this.realPosition.y - collidingObject.realPosition.y);
+        double dx = this.realPosition.x - collidingObject.realPosition.x;
+        double dy = this.realPosition.y - collidingObject.realPosition.y;
         double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
         return distance < this.radius + collidingObject.getRadius();
     }
