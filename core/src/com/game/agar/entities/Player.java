@@ -1,55 +1,43 @@
 package com.game.agar.entities;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.game.agar.tools.Position;
-
-import java.util.*;
+import com.game.agar.tools.PositionConverger;
 
 public class Player extends Entity {
 
     private double movingDirectionAngle;
+    private PositionConverger drawingPosition;
 
     public Player(Position position, int weight) {
         super(position, weight);
+
+        drawingPosition = new PositionConverger(position.copy(), position);
         color = Color.RED;
+    }
+
+    @Override
+    public Position getDrawingPosition() {
+        return drawingPosition.getValue();
     }
 
     public void setMovingDirection(double angle) {
         this.movingDirectionAngle = angle;
+        drawingPosition.convergeNow();
     }
 
     public void move(double translation) {
-        position.x += translation * Math.cos(movingDirectionAngle);
-        position.y += translation * Math.sin(movingDirectionAngle);
+        realPosition.x += translation * Math.cos(movingDirectionAngle);
+        realPosition.y += translation * Math.sin(movingDirectionAngle);
+
+        drawingPosition.convergeNow();
+        //drawingPosition.doConvergeFully(200);
     }
 
     public void eat (Entity collidingObject){
         int massGained = collidingObject.getWeight();
-        Timer timer = new Timer();
-        TimerTask growth = new TimerTask() {
-            int targetWeight = weight + massGained ;
-            int gain = 1 + massGained/1000;
-            @Override
-            public void run() {
-                if (weight == targetWeight) {
-                    cancel();
-                    timer.cancel();
-                    timer.purge();
-                }
-                else
-                {
-                    if(weight + gain <=  targetWeight)
-                        weight += gain;
-                    else
-                        weight = targetWeight;
-                    updateRadius();
-                }
-            }
-        };
-        timer.schedule(growth,0,1);
+
+        updateRadius(massGained);
     }
 
 }
