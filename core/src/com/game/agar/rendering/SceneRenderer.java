@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SceneRenderer implements IRenderer{
 
-    private List<Entity> entities;
+    private final List<Entity> entities;
     private Camera camera;
     private ShapeRenderer shapeRenderer;
 
@@ -34,14 +34,16 @@ public class SceneRenderer implements IRenderer{
         shapeRenderer.setTransformMatrix(camera.getMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         {
-            entities.forEach(this::renderEntity);
+            synchronized (entities) {
+                entities.forEach(this::renderEntity);
+            }
         }
         shapeRenderer.end();
     }
 
     private void renderEntity(Entity entity){
         shapeRenderer.setColor(entity.getColor());
-        shapeRenderer.circle(entity.getDrawingPosition().x,entity.getDrawingPosition().y,entity.getDrawingRadius());
+        shapeRenderer.circle(entity.getPosition().x,entity.getPosition().y,entity.getRadius());
     }
 
     @Override
