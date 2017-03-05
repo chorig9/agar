@@ -1,42 +1,37 @@
 package com.game.agar.entities;
 
 import com.badlogic.gdx.graphics.Color;
+import com.game.agar.tools.FloatConverger;
 import com.game.agar.tools.Position;
 import com.game.agar.tools.PositionConverger;
 
 public class Player extends Entity {
 
-    private double movingDirectionAngle;
-    private PositionConverger drawingPosition;
+    private PositionConverger position;
+    private FloatConverger radius;
 
-    public Player(Position position, int weight) {
-        super(position, weight);
+    public Player(Position position, float radius) {
+        this.position = new PositionConverger(position.copy(), position);
+        this.radius = new FloatConverger(radius, radius);
+    }
 
-        drawingPosition = new PositionConverger(position.copy(), position);
-        color = Color.RED;
+    public void setPosition(Position position){
+        this.position.setConvergenceTo(position);
+        this.position.doConvergeFully(50);
+    }
+
+    public void setRadius(float radius){
+        this.radius.setConvergenceTo(radius);
+        this.radius.doConvergeFully(100);
     }
 
     @Override
-    public Position getDrawingPosition() {
-        return drawingPosition.getValue();
+    public Position getPosition() {
+        return position.getValue();
     }
 
-    public void setMovingDirection(double angle) {
-        this.movingDirectionAngle = angle;
-        drawingPosition.convergeNow();
+    @Override
+    public float getRadius() {
+        return radius.getValue();
     }
-
-    public void move(double translation) {
-        realPosition.x += translation * Math.cos(movingDirectionAngle);
-        realPosition.y += translation * Math.sin(movingDirectionAngle);
-
-        drawingPosition.convergeNow();
-        //drawingPosition.doConvergeFully(200);
-    }
-
-    public void eat (Entity collidingObject){
-        float massGained = collidingObject.getWeight();
-        updateRadius(massGained);
-    }
-
 }

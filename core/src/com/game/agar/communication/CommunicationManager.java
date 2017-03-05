@@ -10,6 +10,7 @@ public class CommunicationManager {
     private BufferedReader in;
     private PrintWriter out;
     private Consumer<String> listener;
+    private Consumer<Exception> exceptionListener;
 
     private volatile boolean running;
 
@@ -17,24 +18,34 @@ public class CommunicationManager {
         this.listener = listener;
     }
 
-    public void start() throws IOException {
+    public CommunicationManager(Consumer<Exception> exceptionListener){
+        this.exceptionListener = exceptionListener;
+
+        try{
+            socket = new Socket("localhost", 1234);
+            InputStream inputStream = socket.getInputStream();
+            OutputStream outputStream = socket.getOutputStream();
+
+            in = new BufferedReader(new InputStreamReader(inputStream));
+            out = new PrintWriter(outputStream);
+        }
+        catch(IOException e){
+            exceptionListener.accept(e);
+        }
+    }
+
+    public void start(){
         running = true;
-        socket = new Socket("localhost", 1234);
-        InputStream inputStream = socket.getInputStream();
-        OutputStream outputStream = socket.getOutputStream();
-
-        in = new BufferedReader(new InputStreamReader(inputStream));
-        out = new PrintWriter(outputStream);
-
         new Thread(this::handleInput).start();
     }
 
-    public void send(String msg) throws IOException{
+    public void send(String msg){
         if(!socket.isConnected())
-            throw new IOException("connection closed");
-
-        out.print(msg);
-        out.flush();
+            exceptionListener.accept(new IOException("socket closed"));
+        else {
+            out.println(msg);
+            out.flush();
+        }
     }
 
     private void handleInput(){
@@ -43,15 +54,19 @@ public class CommunicationManager {
                 String msg = in.readLine();
                 listener.accept(msg);
             } catch (IOException e) {
-                e.printStackTrace();
+                exceptionListener.accept(e);
             }
         }
     }
 
     // TODO - where to call this method?
-    public void end() throws IOException {
+    public void end(){
         running = false;
-        socket.close();
+        try {
+            socket.close();
+        } catch (IOException e) {
+            exceptionListener.accept(e);
+        }
     }
 
 }

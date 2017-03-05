@@ -2,17 +2,21 @@ package com.game.agar.control;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.game.agar.communication.CommunicationManager;
 import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class Controller extends InputAdapter{
 
     private Camera camera;
-    private Player player;
+    private CommunicationManager manager;
 
-    public Controller(Camera camera, Player player){
+    public Controller(Camera camera, CommunicationManager manager){
         this.camera = camera;
-        this.player = player;
+        this.manager = manager;
     }
 
     @Override
@@ -26,7 +30,10 @@ public class Controller extends InputAdapter{
         double angle = Math.atan2(-(screenY - Gdx.graphics.getHeight() / 2),
                 (screenX - Gdx.graphics.getWidth()  / 2));
 
-        player.setMovingDirection(angle);
+        JSONObject json = new JSONObject();
+        json.put("action", "mouse_move");
+        json.put("angle", angle);
+        manager.send(json.toString());
 
         return false;
     }
