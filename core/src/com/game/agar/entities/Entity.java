@@ -11,16 +11,14 @@ public abstract class Entity {
     static Random random = new Random();
 
     Position realPosition;
-    int weight;
     Color color;
-
     float radius;
+
     FloatConverger drawingRadius;
 
-    Entity(Position position, int weight){
+    Entity(Position position, float radius){
         this.realPosition = position;
-        this.weight = weight;
-        this.radius = (float)Math.sqrt(weight/Math.PI);
+        this.radius = radius;
 
         drawingRadius = new FloatConverger(radius, radius);
 
@@ -35,15 +33,13 @@ public abstract class Entity {
         return realPosition;
     }
 
-    public float getRadius() { return drawingRadius.getValue(); }
-    public int getWeight() { return weight; }
+    public float getDrawingRadius() { return drawingRadius.getValue(); }
+    public float getWeight() { return (float) Math.PI * radius * radius; }
     public Color getColor() { return color; }
 
-    void updateRadius(int massGained){
-        weight += massGained;
-        radius = (float)Math.sqrt(weight/Math.PI);
+    void updateRadius(float massGained){
+        radius = (float) Math.sqrt(radius * radius + massGained / Math.PI);
         drawingRadius.setConvergenceTo(radius);
-
         drawingRadius.doConvergeFully(300);
     }
 
@@ -51,7 +47,7 @@ public abstract class Entity {
         double dx = this.realPosition.x - collidingObject.realPosition.x;
         double dy = this.realPosition.y - collidingObject.realPosition.y;
         double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        return distance < this.radius + collidingObject.getRadius();
+        return distance < this.radius + collidingObject.radius;
     }
 
 }

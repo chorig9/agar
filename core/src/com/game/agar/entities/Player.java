@@ -35,8 +35,7 @@ public class Player extends Entity {
     }
 
     public void eat (Entity collidingObject){
-        int massGained = collidingObject.getWeight();
-
+        float massGained = collidingObject.getWeight();
         updateRadius(massGained);
     }
 

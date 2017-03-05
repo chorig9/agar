@@ -34,10 +34,10 @@ public class Game extends ApplicationAdapter{
 		entities = new ArrayList<>();
 
 		// TESTING
-		entities.add(new Ball(new Position(10,10),100));
-		entities.add(new Ball(new Position(100,10),200));
-		entities.add(new Ball(new Position(10,100),300));
-		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ),350);
+		entities.add(new Ball(new Position(10,10),5));
+		entities.add(new Ball(new Position(100,10),6));
+		entities.add(new Ball(new Position(10,100),7));
+		player = new Player(new Position(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() /2 ),10);
 		entities.add(player);
 
 		renderer = new SceneRenderer(camera, entities);

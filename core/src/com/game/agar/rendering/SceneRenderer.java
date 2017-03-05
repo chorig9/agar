@@ -41,7 +41,7 @@ public class SceneRenderer implements IRenderer{
 
     private void renderEntity(Entity entity){
         shapeRenderer.setColor(entity.getColor());
-        shapeRenderer.circle(entity.getDrawingPosition().x,entity.getDrawingPosition().y,entity.getRadius());
+        shapeRenderer.circle(entity.getDrawingPosition().x,entity.getDrawingPosition().y,entity.getDrawingRadius());
     }
 
     @Override
