@@ -1,4 +1,4 @@
-package com.game.agarserver.logic;
+package com.game.agarserver.main.logic;
 
 public class Player extends Entity{
 
@@ -19,6 +19,8 @@ public class Player extends Entity{
     public void move(float distance){
         position.x += Math.cos(movingAngle) * distance;
         position.y += Math.sin(movingAngle) * distance;
+
+        listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
     public boolean isCollision(Entity collidingObject){
@@ -28,8 +30,21 @@ public class Player extends Entity{
         return distance < this.radius + collidingObject.radius;
     }
 
+    public void handleCollision(Entity entity){
+        if(radius > entity.radius){
+            updateRadius(entity.getWeight());
+            entity.die();
+        }
+        else if(entity instanceof Player){
+            Player player = (Player) entity;
+            player.updateRadius(getWeight());
+            die();
+        }
+    }
+
     public void updateRadius(float massGained){
         radius = (float) Math.sqrt(radius * radius + massGained / Math.PI);
+        listener.accept(PacketFactory.createRadiusPacket(id, radius));
     }
 
 }

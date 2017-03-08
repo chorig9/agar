@@ -1,8 +1,6 @@
-package com.game.agarserver.communication;
+package com.game.agarserver.main.communication;
 
-
-
-import com.game.agarserver.logic.World;
+import com.game.agarserver.main.logic.World;
 
 import java.io.IOException;
 import java.net.ServerSocket;

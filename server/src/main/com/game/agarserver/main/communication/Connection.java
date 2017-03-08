@@ -1,4 +1,4 @@
-package com.game.agarserver.communication;
+package com.game.agarserver.main.communication;
 
 import java.io.*;
 import java.net.Socket;
@@ -52,6 +52,7 @@ public class Connection {
                 String msg = in.readLine();
                 listener.accept(msg);
             } catch (IOException e) {
+                running = false;
                 e.printStackTrace();
             }
         }
