@@ -2,20 +2,31 @@ package com.game.agar.communication;
 
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
-import com.game.agar.entities.Player;
+import com.game.agar.entities.Food;
 import com.game.agar.tools.Position;
+import org.json.JSONObject;
 
 import java.util.List;
-import org.json.JSONObject;
 
 public class Handler {
 
     private List<Entity> entities;
-    private Player player;
+    private List<Ball> playerBalls;
+    private CommunicationManager manager;
 
-    public Handler(List<Entity> entities, Player player) {
+    public Handler(List<Entity> entities, List<Ball> playerBalls,CommunicationManager manager) {
         this.entities = entities;
-        this.player = player;
+        this.playerBalls = playerBalls;
+        this.manager = manager;
+    }
+
+    private Ball getDestinationBall(long id)
+    {
+        for (Ball ball:playerBalls) {
+            if(ball.getId() == id)
+                return ball;
+        }
+        return null;
     }
 
     public void handleRequest(String request){
@@ -27,7 +38,7 @@ public class Handler {
             case "add": {
                 Position position = new Position((float) json.getDouble("x"), (float) json.getDouble("y"));
                 float radius = (float) json.getDouble("radius");
-                entities.add(new Ball(position, radius));
+                entities.add(new Food(position, radius));
                 break;
             }
             case "remove": {
@@ -36,13 +47,29 @@ public class Handler {
                 break;
             }
             case "move": {
+                Long id = json.getLong("id");
+                Ball destination = getDestinationBall(id);
                 Position position = new Position((float) json.getDouble("x"), (float) json.getDouble("y"));
-                player.setPosition(position);
+                destination.setPosition(position);
                 break;
             }
             case "radius_change": {
+                Long id = json.getLong("id");
+                Ball destination = getDestinationBall(id);
                 float new_radius = (float) json.getDouble("radius");
-                player.setRadius(new_radius);
+                destination.setRadius(new_radius);
+                break;
+            }
+            case "request": {
+                Long id = json.getLong("id");
+                Ball destination = getDestinationBall(id);
+                double angle = destination.getMoveAngle();
+                JSONObject answer = new JSONObject();
+                answer.put("action", "mouse_move");
+                answer.put("id",id);
+                answer.put("angle", angle);
+                answer.put("addition", "requestedRefresh");
+                manager.send(answer.toString());
                 break;
             }
         }

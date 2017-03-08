@@ -1,19 +1,21 @@
 package com.game.agar;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.game.agar.communication.CommunicationManager;
 import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
+import com.game.agar.entities.Ball;
+import com.game.agar.entities.Entity;
 import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
-import com.game.agar.entities.Entity;
 import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.tools.Position;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 
 public class Game extends ApplicationAdapter{
@@ -23,26 +25,31 @@ public class Game extends ApplicationAdapter{
     private Handler handler;
 	private List<Entity> entities;
 	private CommunicationManager manager;
-
 	private Player player;
 
 	@Override
 	public void create () {
 		camera = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		entities = Collections.synchronizedList(new ArrayList<>());
+		player = new Player();
+		List<Ball> playerBalls = player.getBalls();
 
 		// TESTING
-		player = new Player(new Position(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), 10);
-		entities.add(player);
+		Ball initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), 10,0);
+		playerBalls.add(initialBall);
+		entities.add(initialBall);
+		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 100), 10,1);
+		playerBalls.add(initialBall);
+		entities.add(initialBall);
 
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
 		manager = new CommunicationManager(this::handleError);
 
-		Gdx.input.setInputProcessor(new Controller(camera, manager));
+		Gdx.input.setInputProcessor(new Controller(camera, manager,player));
 
-		handler = new Handler(entities, player);
+		handler = new Handler(entities, playerBalls,manager);
 		manager.setCommunicationListener(handler::handleRequest);
 
 		manager.start();
@@ -54,7 +61,7 @@ public class Game extends ApplicationAdapter{
 
 	@Override
 	public void render () {
-		camera.setPosition(player.getPosition());
+		camera.setPosition(player.getMassCenter());
 		renderer.renderFrame();
 	}
 
