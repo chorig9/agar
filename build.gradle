@@ -37,7 +37,6 @@ project(":desktop") {
 
     dependencies {
         compile project(":core")
-        compile "org.json:json:20140107"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
@@ -52,6 +51,15 @@ project(":core") {
         compile "org.json:json:20140107"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    }
+}
+
+project(":server") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile "org.json:json:20140107"
     }
 }
 
