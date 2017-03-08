@@ -1,6 +1,5 @@
 package com.game.agarserver.logic;
 
-import com.game.agarserver.main.logic.User;
 import org.json.JSONObject;
 
 import java.util.List;

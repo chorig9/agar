@@ -1,4 +1,4 @@
-package com.game.agarserver.main.logic;
+package com.game.agarserver.logic;
 
 public class Player extends Entity{
 

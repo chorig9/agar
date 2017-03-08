@@ -1,4 +1,4 @@
-package com.game.agarserver.main.communication;
+package com.game.agarserver.communication;
 
 import java.io.*;
 import java.net.Socket;

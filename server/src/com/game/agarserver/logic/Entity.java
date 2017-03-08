@@ -1,4 +1,4 @@
-package com.game.agarserver.main.logic;
+package com.game.agarserver.logic;
 
 import org.json.JSONObject;
 
