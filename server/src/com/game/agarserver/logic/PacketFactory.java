@@ -38,4 +38,12 @@ public class PacketFactory {
         return json;
     }
 
+    static JSONObject requestMoveAngle(long id){
+        JSONObject json = new JSONObject();
+        json.put("action", "request");
+        json.put("id", id);
+        json.put("key", "move_angle");
+        return json;
+    }
+
 }

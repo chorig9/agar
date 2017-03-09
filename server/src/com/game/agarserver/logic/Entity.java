@@ -27,4 +27,8 @@ public class Entity {
         return (float) Math.PI * radius * radius;
     }
 
+    public Position getPosition() {return position;}
+
+    public float getRadius() {return radius;}
+
 }

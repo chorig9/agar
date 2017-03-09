@@ -29,7 +29,7 @@ public class Controller extends InputAdapter{
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        Position basePosition = player.getMassCenter();
+        Position basePosition = player.getBiggestBall().getPosition();
         for (Ball ball: player.getBalls()) {
             Position thisBallPosition = ball.getPosition();
             Position difference = new Position(thisBallPosition.x-basePosition.x,thisBallPosition.y-basePosition.y);
