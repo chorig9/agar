@@ -43,19 +43,14 @@ public class World {
             public void run() {
                 users.forEach(user -> {
                     for (Ball ball:user.getBalls()) {
-                        Position enteredPosition = ball.getEnteredPosition();
-
-                        food.stream().filter(foodObj->ball.isCollision(enteredPosition,foodObj)).forEach(ball::handleCollision);
-                        food.removeIf(foodObj->ball.isCollision(enteredPosition,foodObj));
+                        food.stream().filter(ball::isCollision).forEach(ball::handleCollision);
+                        food.removeIf(ball::isCollision);
 
                         balls.stream().
-                                filter(anotherBall -> ball != anotherBall & ball.isCollision(enteredPosition,anotherBall)).
+                                filter(anotherBall -> ball != anotherBall & ball.isCollision(anotherBall)).
                                 forEach(ball::handleCollision);
 
-                        if(ball.isMoving())
-                            ball.moveTo(enteredPosition);
-                        else
-                            ball.startMoving();
+                        ball.move();
                     }
                 });
             }
