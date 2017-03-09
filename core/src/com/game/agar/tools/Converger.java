@@ -13,6 +13,7 @@ public abstract class Converger<T> {
     private int convergenceTime;
     private volatile long time;
     private T step;
+    private boolean converged = false;
 
     public Converger(T originalValue, int convergenceTime){
         this.originalValue = originalValue;
@@ -23,11 +24,11 @@ public abstract class Converger<T> {
         TimerTask growth = new TimerTask() {
             @Override
             public void run() {
-                if(isConverged()) {
-                    time = System.currentTimeMillis();
-                }
-                else {
+                if(!isConverged()) {
                     convergeBy(step);
+                    if(isConverged()){
+                        time = System.currentTimeMillis();
+                    }
                 }
             }
         };

@@ -37,11 +37,10 @@ public class Ball extends Entity{
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
-    public Position getEnteredPosition()
-    {
-     float enteredX = position.x + (float)Math.cos(moveAngle) * speed;
-     float enteredY = position.y + (float)Math.sin(moveAngle) * speed;
-    return new Position(enteredX,enteredY);
+    public Position getEnteredPosition() {
+        float enteredX = position.x + (float)Math.cos(moveAngle) * speed;
+        float enteredY = position.y + (float)Math.sin(moveAngle) * speed;
+        return new Position(enteredX,enteredY);
     }
 
     public boolean isCollision(Position enteredPosition,Entity collidingObject){
@@ -52,12 +51,10 @@ public class Ball extends Entity{
     }
 
     public void handleCollision(Entity entity){
-        if(entity instanceof Ball)
-        {
+        if(entity instanceof Ball) {
             Ball ball = (Ball) entity;
             if(ownerId == ball.getOwnerId()) {
                 stopMoving();
-                //setBypassDirection(ball);
             }
             else {
                 if(radius >= ball.radius) {

@@ -18,7 +18,6 @@ public abstract class Entity {
         this.color = new Color(red,green,blue,1);
     }
 
-    // in basic case realPosition == drawingPosition
     public abstract Position getPosition();
     public abstract float getRadius();
     public Color getColor() { return color; }

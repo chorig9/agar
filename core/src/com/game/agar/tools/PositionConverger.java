@@ -23,7 +23,6 @@ public class PositionConverger extends Converger<Position> {
 
     @Override
     public void convergeBy(Position amount) {
-        // TODO better algorithm for position convergence
         int signX = convergenceValue.x > originalValue.x ? 1 : -1;
         int signY = convergenceValue.y > originalValue.y ? 1 : -1;
 
