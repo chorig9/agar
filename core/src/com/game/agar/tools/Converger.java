@@ -5,45 +5,51 @@ import java.util.TimerTask;
 
 public abstract class Converger<T> {
 
-    T originalValue, convergenceValue;
     final float ACCURACY = 0.0001f;
-    private final int TIME_STEP = 1;
+    final int TIME_STEP = 5;
+    final int TIME_ADJUSTMENT = 10;
 
-    public Converger(T originalValue, T convergenceValue){
+    T originalValue, convergenceValue;
+    private int convergenceTime;
+    private volatile long time;
+    private T step;
+
+    public Converger(T originalValue, int convergenceTime){
         this.originalValue = originalValue;
-        this.convergenceValue = convergenceValue;
-    }
-    
-    public void setConvergenceTo(T convergenceValue){
-        this.convergenceValue = convergenceValue;
-    }
+        this.convergenceTime = convergenceTime;
 
-    public void convergeNow(){
-        originalValue = convergenceValue;
-    }
-
-    public void doConvergeFully(float duration){
-        T step = getStep(duration / TIME_STEP);
-        Timer timer = new Timer();
+        convergenceValue = originalValue;
+        step = getStep(1);
         TimerTask growth = new TimerTask() {
             @Override
             public void run() {
                 if(isConverged()) {
-                    timer.cancel();
-                    timer.purge();
+                    time = System.currentTimeMillis();
                 }
                 else {
                     convergeBy(step);
                 }
             }
         };
-        timer.schedule(growth, 0, TIME_STEP);
+
+        new Timer().schedule(growth, 0, TIME_STEP);
+    }
+
+    public void doConverge(T convergenceValue){
+        if(!isConverged())                               // if value had not been converged before new value came
+            convergenceTime -= TIME_ADJUSTMENT;          // adjust convergenceTime
+        else if(System.currentTimeMillis() - time > 15)  // if convergence had been done before new value came (long enough)
+            convergenceTime += TIME_ADJUSTMENT;          // adjust convergenceTime
+
+
+        this.convergenceValue = convergenceValue;
+        step = getStep(convergenceTime / TIME_STEP);
     }
 
     public abstract T getDifference();
 
     public abstract T getStep(float part);
-    
+
     public abstract void convergeBy(T amount);
 
     public abstract boolean isConverged();
@@ -51,5 +57,5 @@ public abstract class Converger<T> {
     public T getValue(){
         return originalValue;
     }
-    
+
 }

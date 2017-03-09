@@ -19,7 +19,15 @@ public class Position {
         }
     }
 
+    @Override
+    public String toString() {
+        return Float.toString(x) + ":" + Float.toString(y);
+    }
+
     public Position copy(){
         return new Position(x, y);
     }
+
+
+
 }
