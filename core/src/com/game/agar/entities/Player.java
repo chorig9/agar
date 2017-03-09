@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Mily on 2017-03-07.
- */
 public class Player {
     private List<Ball> balls;
     private int score;

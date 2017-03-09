@@ -12,19 +12,17 @@ public class Ball extends Entity {
     private FloatConverger radius;
 
     public Ball(Position position, float radius, long id) {
-        this.position = new PositionConverger(position.copy(), position);
-        this.radius = new FloatConverger(radius, radius);
+        this.position = new PositionConverger(position, 100);
+        this.radius = new FloatConverger(radius, 100);
         this.id = id;
     }
 
     public void setPosition(Position position){
-        this.position.setConvergenceTo(position);
-        this.position.doConvergeFully(50);
+        this.position.doConverge(position);
     }
 
     public void setRadius(float radius){
-        this.radius.setConvergenceTo(radius);
-        this.radius.doConvergeFully(100);
+        this.radius.doConverge(radius);
     }
 
     @Override

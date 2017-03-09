@@ -4,9 +4,6 @@ import com.game.agar.entities.Ball;
 import java.lang.Float;
 import java.util.Comparator;
 
-/**
- * Created by Mily on 2017-03-07.
- */
 public class BallsComparator implements Comparator<Ball> {
     @Override
     public int compare(Ball o1, Ball o2) {
