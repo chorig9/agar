@@ -9,7 +9,7 @@ public class Ball extends Entity{
     private float moveAngle;
     private float speed;
 
-    private Position moveVector = new Position(0, 0);
+    private Position force = new Position(0, 0);
 
     public Ball(Position position, int radius, long ownerId){
         super(position, radius);
@@ -24,22 +24,32 @@ public class Ball extends Entity{
 
     public void setMoveAngle(float angle){
         moveAngle = angle;
-        moveVector.x = (float)Math.cos(moveAngle) * speed;
-        moveVector.y = (float)Math.sin(moveAngle) * speed;
+        force.x = force.y = 0;
+    }
+
+    public Position getVector(){
+        float x = (float)Math.cos(moveAngle) * speed + force.x;
+        float y = (float)Math.sin(moveAngle) * speed + force.y;
+
+        return new Position(x, y);
+    }
+
+    public Position getNextPosition(){
+        return new Position(position.x + getVector().x, position.y + getVector().y);
     }
 
     public void move(){
-        position.x += moveVector.x;
-        position.y += moveVector.y;
-        setMoveAngle(moveAngle);
+        position = getNextPosition();
+        force.x = force.y = 0;
+
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
     public boolean isCollision(Entity collidingObject){
-        double dx = position.x - collidingObject.position.x;
-        double dy = position.y - collidingObject.position.y;
+        double dx = getNextPosition().x - collidingObject.position.x;
+        double dy = getNextPosition().y - collidingObject.position.y;
         double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        return distance <= this.radius + collidingObject.radius;
+        return distance < this.radius + collidingObject.radius;
     }
 
     Position vectorProjection(Position a, Position b){
@@ -60,9 +70,10 @@ public class Ball extends Entity{
 
                     // od wektora prekości kulki odejmuję prędkość w kierunku kolizyjnej kulki (rzut na prostą)
                     Position pull = new Position(position.x - ball.position.x, position.y - ball.position.y);
-                    Position p = vectorProjection(moveVector, pull);
-                    moveVector.x -=  (p.x - ball.moveVector.x);
-                    moveVector.y -=  (p.y - ball.moveVector.y);
+                    Position toBall = vectorProjection(getVector(), pull);
+                    Position fromBall = vectorProjection(ball.getVector(), pull);
+                    force.x =  fromBall.x - toBall.x;
+                    force.y =  fromBall.y - toBall.y;
 
                 } else {
                     if (radius >= ball.radius) {
