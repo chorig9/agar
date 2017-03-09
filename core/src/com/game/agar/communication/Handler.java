@@ -7,26 +7,18 @@ import com.game.agar.tools.Position;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 public class Handler {
 
     private List<Entity> entities;
-    private List<Ball> playerBalls;
+    private Map<Long, Ball> playerBalls;
     private CommunicationManager manager;
 
-    public Handler(List<Entity> entities, List<Ball> playerBalls,CommunicationManager manager) {
+    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls,CommunicationManager manager) {
         this.entities = entities;
         this.playerBalls = playerBalls;
         this.manager = manager;
-    }
-
-    private Ball getDestinationBall(long id)
-    {
-        for (Ball ball:playerBalls) {
-            if(ball.getId() == id)
-                return ball;
-        }
-        return null;
     }
 
     public void handleRequest(String request){
@@ -47,21 +39,21 @@ public class Handler {
             }
             case "move": {
                 Long id = json.getLong("id");
-                Ball destination = getDestinationBall(id);
+                Ball destination = playerBalls.get(id);
                 Position position = new Position((float) json.getDouble("x"), (float) json.getDouble("y"));
                 destination.setPosition(position);
                 break;
             }
             case "radius_change": {
                 Long id = json.getLong("id");
-                Ball destination = getDestinationBall(id);
+                Ball destination = playerBalls.get(id);
                 float new_radius = (float) json.getDouble("radius");
                 destination.setRadius(new_radius);
                 break;
             }
             case "request": {
                 Long id = json.getLong("id");
-                Ball destination = getDestinationBall(id);
+                Ball destination = playerBalls.get(id);
                 double angle = destination.getMoveAngle();
                 JSONObject answer = new JSONObject();
                 answer.put("action", "mouse_move");

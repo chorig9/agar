@@ -3,27 +3,25 @@ package com.game.agar.entities;
 import com.game.agar.tools.BallsComparator;
 import com.game.agar.tools.Position;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Player {
-    private List<Ball> balls;
+    private Map<Long, Ball> balls;
     private int score;
 
     public Player(){
-        balls = new ArrayList<>();
+        balls = new HashMap<>();
         score = 0;
     }
-    public List<Ball> getBalls() {return balls;}
+    public Map<Long, Ball> getBalls() {return balls;}
     public int getScore() {return score;}
     public Ball getBiggestBall() {
-        return Collections.max(balls,new BallsComparator());
+        return Collections.max(balls.values(), new BallsComparator());
 }
 
     public Position getMassCenter() {
         float totalMass = 0, totalX = 0, totalY = 0;
-        for(Ball ball : balls){
+        for(Ball ball : balls.values()){
             totalMass += ball.getWeight();
             totalX += ball.getWeight() * ball.getPosition().x;
             totalY += ball.getWeight() * ball.getPosition().y;

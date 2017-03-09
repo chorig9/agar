@@ -59,7 +59,6 @@ public class CommunicationManager {
         }
     }
 
-    // TODO - where to call this method?
     public void end(){
         running = false;
         try {

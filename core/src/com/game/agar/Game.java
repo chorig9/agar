@@ -16,6 +16,7 @@ import com.game.agar.tools.Position;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 public class Game extends ApplicationAdapter{
@@ -32,14 +33,14 @@ public class Game extends ApplicationAdapter{
 		camera = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		entities = Collections.synchronizedList(new ArrayList<>());
 		player = new Player();
-		List<Ball> playerBalls = player.getBalls();
+		Map<Long, Ball> playerBalls = player.getBalls();
 
 		// TESTING
 		Ball initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), 10,0);
-		playerBalls.add(initialBall);
+		playerBalls.put(initialBall.getId(), initialBall);
 		entities.add(initialBall);
 		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 100), 10,1);
-		playerBalls.add(initialBall);
+		playerBalls.put(initialBall.getId(), initialBall);
 		entities.add(initialBall);
 
 		renderer = new SceneRenderer(camera, entities);
@@ -49,7 +50,7 @@ public class Game extends ApplicationAdapter{
 
 		Gdx.input.setInputProcessor(new Controller(camera, manager,player));
 
-		handler = new Handler(entities, playerBalls,manager);
+		handler = new Handler(entities, playerBalls, manager);
 		manager.setCommunicationListener(handler::handleRequest);
 
 		manager.start();
