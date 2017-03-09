@@ -58,11 +58,19 @@ public class Ball extends Entity{
         return new Position(b.x * multi / length, b.y * multi / length);
     }
 
+    private float dist(Position p1, Position p2){
+        return (float) Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    }
+
     public void handleCollision(Entity entity){
         if(entity instanceof Ball) {
             Ball ball = (Ball) entity;
             if(speed >= ball.speed) {
                 if (ownerId == ball.getOwnerId()) {
+                    // if ball is getting away
+                    if(dist(getNextPosition(), ball.position) > dist(position, ball.position))
+                        return;
+                    
                     //Position outsideForce = new Position(- position.y + ball.position.y, position.x - ball.position.x);
                     //Position p = vectorProjection(moveVector, outsideForce);
                     //moveVector.x += ball.moveVector.x;
@@ -72,8 +80,8 @@ public class Ball extends Entity{
                     Position pull = new Position(position.x - ball.position.x, position.y - ball.position.y);
                     Position toBall = vectorProjection(getVector(), pull);
                     Position fromBall = vectorProjection(ball.getVector(), pull);
-                    force.x =  fromBall.x - toBall.x;
-                    force.y =  fromBall.y - toBall.y;
+                    force.x = fromBall.x - toBall.x;
+                    force.y = fromBall.y - toBall.y;
 
                 } else {
                     if (radius >= ball.radius) {
