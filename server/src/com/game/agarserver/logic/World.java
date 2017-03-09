@@ -41,14 +41,14 @@ public class World {
             @Override
             public void run() {
                 users.forEach(user -> {
-                    user.move(10);
+                    user.move(30);
                 });
                 handleCollisions();
             }
         };
 
         Timer timer = new Timer();
-        timer.schedule(timerTask, 0, 100);
+        timer.schedule(timerTask, 0, 1000);
     }
 
     public Position findFreePosition(){

@@ -19,7 +19,6 @@ public class Handler {
     }
 
     public void handleRequest(String request){
-        System.out.println(request);
         JSONObject json = new JSONObject(request);
 
         String action = json.getString("action");

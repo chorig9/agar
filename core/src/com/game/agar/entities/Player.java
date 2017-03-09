@@ -11,18 +11,16 @@ public class Player extends Entity {
     private FloatConverger radius;
 
     public Player(Position position, float radius) {
-        this.position = new PositionConverger(position.copy(), position);
-        this.radius = new FloatConverger(radius, radius);
+        this.position = new PositionConverger(position, 1000);
+        this.radius = new FloatConverger(radius, 100);
     }
 
     public void setPosition(Position position){
-        this.position.setConvergenceTo(position);
-        this.position.doConvergeFully(50);
+        this.position.doConverge(position);
     }
 
     public void setRadius(float radius){
-        this.radius.setConvergenceTo(radius);
-        this.radius.doConvergeFully(100);
+        this.radius.doConverge(radius);
     }
 
     @Override

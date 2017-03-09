@@ -2,8 +2,8 @@ package com.game.agar.tools;
 
 public class FloatConverger extends Converger<Float> {
 
-    public FloatConverger(Float first, Float second) {
-        super(first, second);
+    public FloatConverger(Float first, int convergenceTime) {
+        super(first, convergenceTime);
     }
 
     @Override

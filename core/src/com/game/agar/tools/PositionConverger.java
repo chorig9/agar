@@ -2,13 +2,8 @@ package com.game.agar.tools;
 
 public class PositionConverger extends Converger<Position> {
 
-    public PositionConverger(Position first, Position second) {
-        super(first, second);
-    }
-
-    @Override
-    public void convergeNow() {
-        originalValue = convergenceValue.copy();
+    public PositionConverger(Position first, int convergenceTime) {
+        super(first, convergenceTime);
     }
 
     @Override
