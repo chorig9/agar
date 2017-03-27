@@ -68,8 +68,10 @@ public class World {
     public void createNewPlayer(Socket socket){
         Connection connection = new Connection(socket);
         connection.start();
+
         List<Ball> playerBalls = new ArrayList<>();
         User user = new User(playerBalls,connection);
+
         Ball initialBall = new Ball(findFreePosition(),STARTING_RADIUS,user.getId());
         playerBalls.add(initialBall);
         balls.add(initialBall);
@@ -89,7 +91,7 @@ public class World {
                     destinationBall = ball;
             }
             switch(json.getString("action")){
-                case "mouse_move":
+                case "move_angle_update":
                     destinationBall.setMoveAngle((float) json.getDouble("angle"));
                     return;
             }

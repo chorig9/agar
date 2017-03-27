@@ -77,7 +77,7 @@ public class Ball extends Entity{
                     //moveVector.y += ball.moveVector.y;
 
                     // od wektora prekości kulki odejmuję prędkość w kierunku kolizyjnej kulki (rzut na prostą)
-                    Position pull = new Position(position.x - ball.position.x, position.y - ball.position.y);
+                    Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
                     Position toBall = vectorProjection(getVector(), pull);
                     Position fromBall = vectorProjection(ball.getVector(), pull);
                     force.x = fromBall.x - toBall.x;
