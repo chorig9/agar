@@ -46,9 +46,9 @@ public class Game extends ApplicationAdapter{
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
-		manager = new CommunicationManager(this::handleError);
+		manager = new CommunicationManager(player,this::handleError);
 
-		Gdx.input.setInputProcessor(new Controller(camera, manager,player));
+		Gdx.input.setInputProcessor(new Controller(camera, manager, player));
 
 		handler = new Handler(entities, playerBalls, manager);
 		manager.setCommunicationListener(handler::handleRequest);
