@@ -3,7 +3,7 @@ package com.game.agar.communication;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
 import com.game.agar.entities.Food;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -27,8 +27,8 @@ public class Handler {
         String action = json.getString("action");
         switch (action) {
             case "add": {
-                Position position = new Position((float) json.getDouble("x"), (float) json.getDouble("y"));
-                float radius = (float) json.getDouble("radius");
+                Position position = new Position( json.getDouble("x"), json.getDouble("y"));
+                double radius = json.getDouble("radius");
                 entities.add(new Food(position, radius));
                 break;
             }

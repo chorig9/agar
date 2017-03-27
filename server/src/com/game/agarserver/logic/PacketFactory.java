@@ -1,5 +1,6 @@
 package com.game.agarserver.logic;
 
+import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 public class PacketFactory {
@@ -13,7 +14,7 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createRadiusPacket(long id, float radius){
+    static JSONObject createRadiusPacket(long id, double radius){
         JSONObject json = new JSONObject();
         json.put("action", "radius_change");
         json.put("id", id);

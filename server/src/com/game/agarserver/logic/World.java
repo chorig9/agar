@@ -1,5 +1,6 @@
 package com.game.agarserver.logic;
 
+import com.game.agar.shared.Position;
 import com.game.agarserver.communication.Connection;
 import org.json.JSONObject;
 
@@ -43,11 +44,11 @@ public class World {
             public void run() {
                 users.forEach(user -> {
                     for (Ball ball:user.getBalls()) {
-                        food.stream().filter(ball::isCollision).forEach(ball::handleCollision);
-                        food.removeIf(ball::isCollision);
+                        food.stream().filter(ball::isCollidingWith).forEach(ball::handleCollision);
+                        food.removeIf(ball::isCollidingWith);
 
                         balls.stream().
-                                filter(anotherBall -> ball != anotherBall & ball.isCollision(anotherBall)).
+                                filter(anotherBall -> ball != anotherBall & ball.isCollidingWith(anotherBall)).
                                 forEach(ball::handleCollision);
 
                         ball.move();
@@ -76,7 +77,7 @@ public class World {
         playerBalls.add(initialBall);
         balls.add(initialBall);
         Position second = new Position(initialBall.position.x-100,initialBall.position.y-100);
-        initialBall = new Ball(second,STARTING_RADIUS,user.getId());
+        initialBall = new Ball(second, STARTING_RADIUS,user.getId());
         playerBalls.add(initialBall);
         balls.add(initialBall);
         playerBalls.forEach(ball->ball.setListener(broadcaster));
@@ -92,7 +93,8 @@ public class World {
             }
             switch(json.getString("action")){
                 case "move_angle_update":
-                    destinationBall.setMoveAngle((float) json.getDouble("angle"));
+                    destinationBall.setMoveAngle(json.getDouble("angle"));
+                    destinationBall.resetForce();
                     return;
             }
 

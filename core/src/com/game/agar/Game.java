@@ -11,7 +11,7 @@ import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
 import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -3,7 +3,7 @@ package com.game.agar.communication;
 import com.badlogic.gdx.Gdx;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Player;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 import java.io.*;

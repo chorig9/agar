@@ -1,9 +1,11 @@
 package com.game.agar.entities;
 
+import com.game.agar.shared.Position;
 import com.game.agar.tools.BallsComparator;
-import com.game.agar.tools.Position;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player {
     private Map<Long, Ball> balls;

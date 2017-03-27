@@ -1,7 +1,7 @@
 package com.game.agar.rendering;
 
 import com.badlogic.gdx.math.Matrix4;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 
 public class Camera {
 
@@ -39,8 +39,8 @@ public class Camera {
         float centeringY = y - zoom * y;
 
         // translation accordingly to camera position and zoom
-        float translationX = -(position.x - x) * zoom;
-        float translationY = -(position.y - y) * zoom;
+        float translationX = -((float)position.x - x) * zoom;
+        float translationY = -((float)position.y - y) * zoom;
 
         translation.setToTranslation(centeringX + translationX, centeringY + translationY, 0);
         matrix = translation.mul(matrix);

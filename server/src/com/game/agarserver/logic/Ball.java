@@ -1,13 +1,17 @@
 package com.game.agarserver.logic;
 
+import com.game.agar.shared.Position;
+
+import static com.game.agar.shared.Position.*;
+
 public class Ball extends Entity{
 
     private static long next_id = 0;
 
     private long id;
     private long ownerId;
-    private float moveAngle;
-    private float speed;
+    private double moveAngle;
+    private double speed;
 
     private Position force = new Position(0, 0);
 
@@ -22,44 +26,39 @@ public class Ball extends Entity{
 
     public long getOwnerId() {  return ownerId; }
 
-    public void setMoveAngle(float angle){
+    public double getMoveAngle(){
+        return moveAngle;
+    }
+
+    public void setMoveAngle(double angle){
         moveAngle = angle;
+    }
+
+    public void resetForce(){
         force.x = force.y = 0;
     }
 
-    public Position getVector(){
-        float x = (float)Math.cos(moveAngle) * speed + force.x;
-        float y = (float)Math.sin(moveAngle) * speed + force.y;
+    public Position getMovementVector(){
+        double x = Math.cos(moveAngle) * speed + force.x;
+        double y = Math.sin(moveAngle) * speed + force.y;
 
         return new Position(x, y);
     }
 
     public Position getNextPosition(){
-        return new Position(position.x + getVector().x, position.y + getVector().y);
+        return sum(position, getMovementVector());
     }
 
     public void move(){
         position = getNextPosition();
-        force.x = force.y = 0;
+        resetForce();
 
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
-    public boolean isCollision(Entity collidingObject){
-        double dx = getNextPosition().x - collidingObject.position.x;
-        double dy = getNextPosition().y - collidingObject.position.y;
-        double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        return distance < this.radius + collidingObject.radius;
-    }
-
-    Position vectorProjection(Position a, Position b){
-        float multi = a.x * b.x + a.y * b.y;
-        float length = b.x * b.x + b.y * b.y;
-        return new Position(b.x * multi / length, b.y * multi / length);
-    }
-
-    private float dist(Position p1, Position p2){
-        return (float) Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    public boolean isCollidingWith(Entity otherObject){
+        double distance = getNextPosition().distanceTo(otherObject.getPosition());
+        return distance < this.radius + otherObject.radius;
     }
 
     public void handleCollision(Entity entity){
@@ -68,7 +67,7 @@ public class Ball extends Entity{
             if(speed >= ball.speed) {
                 if (ownerId == ball.getOwnerId()) {
                     // if ball is getting away
-                    if(dist(getNextPosition(), ball.position) > dist(position, ball.position))
+                    if(distanceBetween(getNextPosition(), ball.position) > distanceBetween(position, ball.position))
                         return;
                     
                     //Position outsideForce = new Position(- position.y + ball.position.y, position.x - ball.position.x);
@@ -78,8 +77,8 @@ public class Ball extends Entity{
 
                     // od wektora prekości kulki odejmuję prędkość w kierunku kolizyjnej kulki (rzut na prostą)
                     Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
-                    Position toBall = vectorProjection(getVector(), pull);
-                    Position fromBall = vectorProjection(ball.getVector(), pull);
+                    Position toBall = vectorProjection(getMovementVector(), pull);
+                    Position fromBall = vectorProjection(ball.getMovementVector(), pull);
                     force.x = fromBall.x - toBall.x;
                     force.y = fromBall.y - toBall.y;
 
@@ -102,10 +101,11 @@ public class Ball extends Entity{
         }
     }
 
-    public void updateRadius(float massGained){
-        radius = (float) Math.sqrt(radius * radius + massGained / Math.PI);
+    public void updateRadius(double massGained){
+        radius = Math.sqrt(radius * radius + massGained / Math.PI);
         speed = 50/radius;
         setMoveAngle(moveAngle);
+        resetForce();
         listener.accept(PacketFactory.createRadiusPacket(id, radius));
     }
 }

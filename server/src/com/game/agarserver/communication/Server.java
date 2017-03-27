@@ -1,6 +1,5 @@
 package com.game.agarserver.communication;
 
-import com.game.agarserver.logic.Position;
 import com.game.agarserver.logic.World;
 
 import java.io.IOException;
