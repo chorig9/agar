@@ -1,6 +1,6 @@
 package com.game.agarserver.logic;
 
-import com.game.agarserver.communication.Connection;
+import com.game.agar.shared.Connection;
 import org.json.JSONObject;
 
 import java.io.IOException;

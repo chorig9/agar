@@ -7,7 +7,7 @@ import com.game.agar.entities.Entity;
 
 import java.util.List;
 
-public class SceneRenderer implements IRenderer{
+public class SceneRenderer{
 
     private final List<Entity> entities;
     private Camera camera;
@@ -18,21 +18,17 @@ public class SceneRenderer implements IRenderer{
         this.entities = entities;
     }
 
-    @Override
     public void init() {
         shapeRenderer = new ShapeRenderer();
     }
 
-    @Override
     public void renderFrame() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shapeRenderer.setTransformMatrix(camera.getMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        {
-            synchronized (entities) {
-                entities.forEach(this::renderEntity);
-            }
+        synchronized (entities) {
+            entities.forEach(this::renderEntity);
         }
         shapeRenderer.end();
     }
@@ -42,7 +38,6 @@ public class SceneRenderer implements IRenderer{
         shapeRenderer.circle((float)entity.getPosition().x,(float) entity.getPosition().y,(float) entity.getRadius());
     }
 
-    @Override
     public void dispose(){
         shapeRenderer.dispose();
     }

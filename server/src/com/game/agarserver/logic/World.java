@@ -1,7 +1,7 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
-import com.game.agarserver.communication.Connection;
+import com.game.agar.shared.Connection;
 import org.json.JSONObject;
 
 import java.net.Socket;
@@ -48,7 +48,7 @@ public class World {
                         food.removeIf(ball::isCollidingWith);
 
                         balls.stream().
-                                filter(anotherBall -> ball != anotherBall & ball.isCollidingWith(anotherBall)).
+                                filter(anotherBall -> ball != anotherBall && ball.isCollidingWith(anotherBall)).
                                 forEach(ball::handleCollision);
 
                         ball.move();
@@ -78,6 +78,10 @@ public class World {
         balls.add(initialBall);
         Position second = new Position(initialBall.position.x-100,initialBall.position.y-100);
         initialBall = new Ball(second, STARTING_RADIUS,user.getId());
+        playerBalls.add(initialBall);
+        balls.add(initialBall);
+        Position third = new Position(initialBall.position.x-50,initialBall.position.y-50);
+        initialBall = new Ball(third, STARTING_RADIUS,user.getId());
         playerBalls.add(initialBall);
         balls.add(initialBall);
         playerBalls.forEach(ball->ball.setListener(broadcaster));

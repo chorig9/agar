@@ -43,5 +43,6 @@ public class Ball extends Entity {
     }
 
     public double getMoveAngle(){ return moveAngle; }
+
     public void setMoveAngle(double moveAngle){ this.moveAngle = moveAngle; }
 }

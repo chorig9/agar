@@ -1,4 +1,4 @@
-package com.game.agarserver.communication;
+package com.game.agar.shared;
 
 import java.io.*;
 import java.net.Socket;
@@ -26,6 +26,15 @@ public class Connection {
         }
         catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public static Connection createConnectionTo(String host, int port){
+        try {
+            Socket socket = new Socket(host, port);
+            return new Connection(socket);
+        } catch (IOException e) {
+            return null;
         }
     }
 

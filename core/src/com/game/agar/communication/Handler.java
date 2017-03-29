@@ -3,9 +3,11 @@ package com.game.agar.communication;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
 import com.game.agar.entities.Food;
+import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +15,12 @@ public class Handler {
 
     private List<Entity> entities;
     private Map<Long, Ball> playerBalls;
-    private CommunicationManager manager;
+    private Connection connection;
 
-    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls,CommunicationManager manager) {
+    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls,Connection connection) {
         this.entities = entities;
         this.playerBalls = playerBalls;
-        this.manager = manager;
+        this.connection = connection;
     }
 
     public void handleRequest(String request){
@@ -60,7 +62,11 @@ public class Handler {
                 answer.put("id",id);
                 answer.put("angle", angle);
                 answer.put("addition", "requestedRefresh");
-                manager.send(answer.toString());
+                try {
+                    connection.send(answer.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }
