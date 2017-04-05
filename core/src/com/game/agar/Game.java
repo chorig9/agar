@@ -2,16 +2,17 @@ package com.game.agar;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.game.agar.communication.CommunicationManager;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
 import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
-import com.game.agar.rendering.IRenderer;
 import com.game.agar.rendering.SceneRenderer;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Connection;
+import com.game.agar.shared.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,11 +22,11 @@ import java.util.Map;
 
 public class Game extends ApplicationAdapter{
 
-	private IRenderer renderer;
+	private SceneRenderer renderer;
 	private Camera camera;
     private Handler handler;
 	private List<Entity> entities;
-	private CommunicationManager manager;
+	private Connection connection;
 	private Player player;
 
 	@Override
@@ -42,23 +43,21 @@ public class Game extends ApplicationAdapter{
 		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 100), 10,1);
 		playerBalls.put(initialBall.getId(), initialBall);
 		entities.add(initialBall);
+		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() / 2 - 50), 10,2);
+		playerBalls.put(initialBall.getId(), initialBall);
+		entities.add(initialBall);
 
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
-		manager = new CommunicationManager(this::handleError);
+		connection = Connection.createConnectionTo("localhost", 1234);
+		Gdx.input.setInputProcessor(new Controller(camera, connection, player));
 
-		Gdx.input.setInputProcessor(new Controller(camera, manager,player));
+		handler = new Handler(entities, playerBalls, connection);
+		connection.setCommunicationListener(handler::handleRequest);
 
-		handler = new Handler(entities, playerBalls, manager);
-		manager.setCommunicationListener(handler::handleRequest);
-
-		manager.start();
+		connection.start();
     }
-
-    private void handleError(Exception error){
-		//error.printStackTrace();
-	}
 
 	@Override
 	public void render () {
@@ -69,6 +68,6 @@ public class Game extends ApplicationAdapter{
 	@Override
 	public void dispose () {
 		renderer.dispose();
-		manager.end();
+		connection.end();
 	}
 }

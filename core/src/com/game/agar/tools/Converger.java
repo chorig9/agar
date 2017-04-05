@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 public abstract class Converger<T> {
 
-    final float ACCURACY = 0.0001f;
+    final double ACCURACY = 0.0001f;
     final int TIME_STEP = 5;
     final int TIME_ADJUSTMENT = 10;
 
@@ -36,20 +36,19 @@ public abstract class Converger<T> {
         new Timer().schedule(growth, 0, TIME_STEP);
     }
 
-    public void doConverge(T convergenceValue){
+    public void doConverge(T destinationValue){
         if(!isConverged())                               // if value had not been converged before new value came
             convergenceTime -= TIME_ADJUSTMENT;          // adjust convergenceTime
         else if(System.currentTimeMillis() - time > 15)  // if convergence had been done before new value came (long enough)
             convergenceTime += TIME_ADJUSTMENT;          // adjust convergenceTime
 
-
-        this.convergenceValue = convergenceValue;
+        this.convergenceValue = destinationValue;
         step = getStep(convergenceTime / TIME_STEP);
     }
 
     public abstract T getDifference();
 
-    public abstract T getStep(float part);
+    public abstract T getStep(double part);
 
     public abstract void convergeBy(T amount);
 

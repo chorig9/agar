@@ -1,8 +1,8 @@
 package com.game.agar.entities;
 
 import com.badlogic.gdx.graphics.Color;
-import com.game.agar.tools.FloatConverger;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
+
 import java.util.Random;
 
 
@@ -19,7 +19,7 @@ public abstract class Entity {
     }
 
     public abstract Position getPosition();
-    public abstract float getRadius();
+    public abstract double getRadius();
     public Color getColor() { return color; }
 
 }

@@ -1,23 +1,23 @@
 package com.game.agar.tools;
 
-public class FloatConverger extends Converger<Float> {
+public class DoubleConverger extends Converger<Double> {
 
-    public FloatConverger(Float first, int convergenceTime) {
+    public DoubleConverger(Double first, int convergenceTime) {
         super(first, convergenceTime);
     }
 
     @Override
-    public Float getDifference() {
+    public Double getDifference() {
         return Math.abs(this.convergenceValue - this.originalValue);
     }
 
     @Override
-    public Float getStep(float part) {
+    public Double getStep(double part) {
         return getDifference() / part;
     }
 
     @Override
-    public void convergeBy(Float amount) {
+    public void convergeBy(Double amount) {
         int sign = convergenceValue > originalValue ? 1 : -1;
 
         if(getDifference() > amount)

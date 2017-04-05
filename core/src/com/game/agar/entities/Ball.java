@@ -1,7 +1,7 @@
 package com.game.agar.entities;
 
-import com.game.agar.tools.FloatConverger;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
+import com.game.agar.tools.DoubleConverger;
 import com.game.agar.tools.PositionConverger;
 
 public class Ball extends Entity {
@@ -9,11 +9,11 @@ public class Ball extends Entity {
     private long id;
     private double moveAngle;
     private PositionConverger position;
-    private FloatConverger radius;
+    private DoubleConverger radius;
 
-    public Ball(Position position, float radius, long id) {
+    public Ball(Position position, double radius, long id) {
         this.position = new PositionConverger(position, 100);
-        this.radius = new FloatConverger(radius, 100);
+        this.radius = new DoubleConverger(radius, 100);
         this.id = id;
     }
 
@@ -21,7 +21,7 @@ public class Ball extends Entity {
         this.position.doConverge(position);
     }
 
-    public void setRadius(float radius){
+    public void setRadius(double radius){
         this.radius.doConverge(radius);
     }
 
@@ -31,17 +31,18 @@ public class Ball extends Entity {
     }
 
     @Override
-    public float getRadius() {
+    public double getRadius() {
         return radius.getValue();
     }
 
     public long getId(){ return id; }
 
     public float getWeight() {
-        float radius = getRadius();
+        double radius = getRadius();
         return (float)(Math.PI * Math.pow(radius,2));
     }
 
     public double getMoveAngle(){ return moveAngle; }
+
     public void setMoveAngle(double moveAngle){ this.moveAngle = moveAngle; }
 }

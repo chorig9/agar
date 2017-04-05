@@ -1,13 +1,13 @@
 package com.game.agar.entities;
 
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 
 public class Food extends Entity {
 
     private Position position;
-    private float radius;
+    private double radius;
 
-    public Food(Position position, float radius) {
+    public Food(Position position, double radius) {
         this.position = position;
         this.radius = radius;
     }
@@ -18,7 +18,7 @@ public class Food extends Entity {
     }
 
     @Override
-    public float getRadius() {
+    public double getRadius() {
         return radius;
     }
 }

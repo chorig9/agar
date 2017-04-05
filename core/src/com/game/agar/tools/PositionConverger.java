@@ -1,5 +1,7 @@
 package com.game.agar.tools;
 
+import com.game.agar.shared.Position;
+
 public class PositionConverger extends Converger<Position> {
 
     public PositionConverger(Position first, int convergenceTime) {
@@ -13,7 +15,7 @@ public class PositionConverger extends Converger<Position> {
     }
 
     @Override
-    public Position getStep(float part) {
+    public Position getStep(double part) {
         Position difference = getDifference();
         difference.x /= part;
         difference.y /= part;

@@ -1,9 +1,10 @@
 package com.game.agar.entities;
 
-import com.game.agar.tools.BallsComparator;
-import com.game.agar.tools.Position;
+import com.game.agar.shared.Position;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player {
     private Map<Long, Ball> balls;
@@ -13,11 +14,14 @@ public class Player {
         balls = new HashMap<>();
         score = 0;
     }
+
     public Map<Long, Ball> getBalls() {return balls;}
+
     public int getScore() {return score;}
+
     public Ball getBiggestBall() {
-        return Collections.max(balls.values(), new BallsComparator());
-}
+        return Collections.max(balls.values(), (o1, o2) -> Double.compare(o1.getRadius(), o2.getRadius()));
+    }
 
     public Position getMassCenter() {
         float totalMass = 0, totalX = 0, totalY = 0;

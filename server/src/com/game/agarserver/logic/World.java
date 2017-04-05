@@ -1,6 +1,7 @@
 package com.game.agarserver.logic;
 
-import com.game.agarserver.communication.Connection;
+import com.game.agar.shared.Position;
+import com.game.agar.shared.Connection;
 import org.json.JSONObject;
 
 import java.net.Socket;
@@ -43,19 +44,14 @@ public class World {
             public void run() {
                 users.forEach(user -> {
                     for (Ball ball:user.getBalls()) {
-                        Position enteredPosition = ball.getEnteredPosition();
-
-                        food.stream().filter(foodObj->ball.isCollision(enteredPosition,foodObj)).forEach(ball::handleCollision);
-                        food.removeIf(foodObj->ball.isCollision(enteredPosition,foodObj));
+                        food.stream().filter(ball::isCollidingWith).forEach(ball::handleCollision);
+                        food.removeIf(ball::isCollidingWith);
 
                         balls.stream().
-                                filter(anotherBall -> ball != anotherBall & ball.isCollision(enteredPosition,anotherBall)).
+                                filter(anotherBall -> ball != anotherBall && ball.isCollidingWith(anotherBall)).
                                 forEach(ball::handleCollision);
 
-                        if(ball.isMoving())
-                            ball.moveTo(enteredPosition);
-                        else
-                            ball.startMoving();
+                        ball.move();
                     }
                 });
             }
@@ -73,13 +69,19 @@ public class World {
     public void createNewPlayer(Socket socket){
         Connection connection = new Connection(socket);
         connection.start();
+
         List<Ball> playerBalls = new ArrayList<>();
         User user = new User(playerBalls,connection);
+
         Ball initialBall = new Ball(findFreePosition(),STARTING_RADIUS,user.getId());
         playerBalls.add(initialBall);
         balls.add(initialBall);
         Position second = new Position(initialBall.position.x-100,initialBall.position.y-100);
-        initialBall = new Ball(second,STARTING_RADIUS,user.getId());
+        initialBall = new Ball(second, STARTING_RADIUS,user.getId());
+        playerBalls.add(initialBall);
+        balls.add(initialBall);
+        Position third = new Position(initialBall.position.x-50,initialBall.position.y-50);
+        initialBall = new Ball(third, STARTING_RADIUS,user.getId());
         playerBalls.add(initialBall);
         balls.add(initialBall);
         playerBalls.forEach(ball->ball.setListener(broadcaster));
@@ -94,8 +96,9 @@ public class World {
                     destinationBall = ball;
             }
             switch(json.getString("action")){
-                case "mouse_move":
-                    destinationBall.setMoveAngle((float) json.getDouble("angle"));
+                case "move_angle_update":
+                    destinationBall.setMoveAngle(json.getDouble("angle"));
+                    destinationBall.resetForce();
                     return;
             }
 

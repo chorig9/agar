@@ -37,6 +37,7 @@ project(":desktop") {
 
     dependencies {
         compile project(":core")
+        compile project(':shared')
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
@@ -51,6 +52,7 @@ project(":core") {
         compile "org.json:json:20140107"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile project(':shared')
     }
 }
 
@@ -60,6 +62,15 @@ project(":server") {
 
     dependencies {
         compile "org.json:json:20140107"
+        compile project(':shared')
+    }
+}
+project(":shared") {
+    apply plugin: "java"
+
+
+    dependencies {
+
     }
 }
 

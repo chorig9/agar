@@ -1,5 +1,6 @@
 package com.game.agarserver.logic;
 
+import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 import java.util.function.Consumer;
@@ -7,10 +8,10 @@ import java.util.function.Consumer;
 public class Entity {
 
     Position position;
-    float radius;
+    double radius;
     Consumer<JSONObject> listener;
 
-    public Entity(Position position, float radius){
+    public Entity(Position position, double radius){
         this.position = position;
         this.radius = radius;
     }
@@ -23,12 +24,12 @@ public class Entity {
         listener.accept(PacketFactory.createRemovePacket(position));
     }
 
-    public float getWeight(){
-        return (float) Math.PI * radius * radius;
+    public double getWeight(){
+        return Math.PI * radius * radius;
     }
 
     public Position getPosition() {return position;}
 
-    public float getRadius() {return radius;}
+    public double getRadius() {return radius;}
 
 }
