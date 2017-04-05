@@ -1,6 +1,7 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Connection;
+import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ public class User  {
 
     private Connection connection;
     private List<Ball> balls;
+    private Position targetVector;
     private int score;
     private long id;
 
@@ -20,6 +22,15 @@ public class User  {
         this.connection = connection;
         this.score = 0;
         this.id = (next_id++) % Long.MAX_VALUE;
+        this.targetVector = new Position(0,0);
+    }
+
+    public void setTargetVector(Position position){
+        targetVector = position;
+    }
+
+    public Position getTargetVector(){
+        return targetVector;
     }
 
     public void sendPacket(JSONObject json){

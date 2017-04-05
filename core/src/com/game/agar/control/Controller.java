@@ -34,26 +34,20 @@ public class Controller extends InputAdapter{
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        screenX -= Gdx.graphics.getWidth() / 2;
 
-        Position basePosition = player.getBiggestBall().getPosition();
-        for (Ball ball: player.getBalls().values()) {
-            Position thisBallPosition = ball.getPosition();
-            Position difference = new Position(thisBallPosition.x-basePosition.x,thisBallPosition.y-basePosition.y);
-            Position screenRelativePosition =
-                    new Position(Gdx.graphics.getWidth()  / 2 + difference.x,Gdx.graphics.getHeight() / 2 - difference.y);
-            double angle = Math.atan2(-(screenY-screenRelativePosition.y),screenX-screenRelativePosition.x);
-            ball.setMoveAngle(angle);
+        screenY = Gdx.graphics.getHeight() - screenY;
+        screenY -= Gdx.graphics.getHeight() / 2;
 
-            JSONObject json = new JSONObject();
-            json.put("action", "move_angle_update");
-            json.put("id",ball.getId());
-            json.put("angle", angle);
-            try {
-                connection.send(json.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-                // TODO
-            }
+        JSONObject json = new JSONObject();
+        json.put("action", "mouse_update");
+        json.put("x", (int) (screenX / camera.getZoom()));
+        json.put("y", (int) (screenY / camera.getZoom()));
+        try {
+            connection.send(json.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            // TODO
         }
 
         return false;
