@@ -22,12 +22,22 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createAddBallPacket(Entity ball){
+    static JSONObject createAddFoodPacket(Entity food){
         JSONObject json = new JSONObject();
-        json.put("action", "add");
+        json.put("action", "add_food");
+        json.put("x", food.position.x);
+        json.put("y", food.position.y);
+        json.put("radius", food.radius);
+        return json;
+    }
+
+    static JSONObject createAddBallPacket(Ball ball){
+        JSONObject json = new JSONObject();
+        json.put("action", "add_ball");
         json.put("x", ball.position.x);
         json.put("y", ball.position.y);
         json.put("radius", ball.radius);
+        json.put("id", ball.getId());
         return json;
     }
 
@@ -36,14 +46,6 @@ public class PacketFactory {
         json.put("action", "remove");
         json.put("x", position.x);
         json.put("y", position.y);
-        return json;
-    }
-
-    static JSONObject requestMoveAngle(long id){
-        JSONObject json = new JSONObject();
-        json.put("action", "request");
-        json.put("id", id);
-        json.put("key", "move_angle");
         return json;
     }
 

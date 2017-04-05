@@ -1,8 +1,8 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
+import com.game.agarserver.tools.Vector;
 
-import static com.game.agar.shared.Position.*;
 
 public class Ball extends Entity{
 
@@ -10,16 +10,18 @@ public class Ball extends Entity{
 
     private long id;
     private long ownerId;
-    private double moveAngle;
-    private double speed;
+    private double moveAngle = 0;
 
-    private Position force = new Position(0, 0);
+    private Position force = new Vector(0, 0);
 
     public Ball(Position position, int radius, long ownerId){
         super(position, radius);
         this.ownerId = ownerId;
         this.id = (next_id++) % Long.MAX_VALUE;
-        this.speed = 50/radius;
+    }
+
+    public double getSpeed(){
+        return 250 / radius;
     }
 
     public long getId(){    return id;  }
@@ -39,71 +41,60 @@ public class Ball extends Entity{
     }
 
     public Position getMovementVector(){
-        double x = Math.cos(moveAngle) * speed + force.x;
-        double y = Math.sin(moveAngle) * speed + force.y;
+        double x = Math.cos(moveAngle) * getSpeed(); // + force.x;
+        double y = Math.sin(moveAngle) * getSpeed(); // + force.y;
 
         return new Position(x, y);
     }
 
     public Position getNextPosition(){
-        return sum(position, getMovementVector());
+        return Vector.sum(position, getMovementVector(), force);
     }
 
     public void move(){
         position = getNextPosition();
         resetForce();
-
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
+    // this method is called only for balls 'responsible' for collision, that is
+    // for balls touching another ball and moving towards it
     public boolean isCollidingWith(Entity otherObject){
-        double distance = getNextPosition().distanceTo(otherObject.getPosition());
-        return distance < this.radius + otherObject.radius;
+        double distance = position.distanceTo(otherObject.getPosition());
+        boolean areEntitiesCloseEnough = distance <= this.radius + otherObject.radius;
+
+        double nextDistance = getNextPosition().distanceTo(otherObject.getPosition());
+        boolean isBallAtCollisionCourse = nextDistance < distance;
+
+        return areEntitiesCloseEnough && isBallAtCollisionCourse;
     }
 
-    public void handleCollision(Entity entity){
-        if(entity instanceof Ball) {
-            Ball ball = (Ball) entity;
-            if(speed >= ball.speed) {
-                if (ownerId == ball.getOwnerId()) {
-                    // if ball is getting away
-                    if(distanceBetween(getNextPosition(), ball.position) > distanceBetween(position, ball.position))
-                        return;
-                    
-                    //Position outsideForce = new Position(- position.y + ball.position.y, position.x - ball.position.x);
-                    //Position p = vectorProjection(moveVector, outsideForce);
-                    //moveVector.x += ball.moveVector.x;
-                    //moveVector.y += ball.moveVector.y;
+    public void eatFood(Entity food){
+        updateRadius(food.getWeight());
+        food.die();
+    }
 
-                    // od wektora prekości kulki odejmuję prędkość w kierunku kolizyjnej kulki (rzut na prostą)
-                    Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
-                    Position toBall = vectorProjection(getMovementVector(), pull);
-                    Position fromBall = vectorProjection(ball.getMovementVector(), pull);
-                    force.x = fromBall.x - toBall.x;
-                    force.y = fromBall.y - toBall.y;
+    public void handleCollision(Ball ball){
+        if (ownerId == ball.getOwnerId()) {
+            Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
+            Position toBall = Vector.projection(getMovementVector(), pull);
 
-                } else {
-                    if (radius >= ball.radius) {
-                        updateRadius(ball.getWeight());
-                        ball.die();
-                    } else {
-                        ball.updateRadius(getWeight());
-                        die();
-                    }
-                }
+            force.x += - toBall.x;
+            force.y += - toBall.y;
+
+        } else {
+            if (radius >= ball.radius) {
+                updateRadius(ball.getWeight());
+                ball.die();
+            } else {
+                ball.updateRadius(getWeight());
+                die();
             }
-            else
-                ball.handleCollision(this);
-        }
-        else {
-            updateRadius(entity.getWeight());
-            entity.die();
         }
     }
 
     public void updateRadius(double massGained){
         radius = Math.sqrt(radius * radius + massGained / Math.PI);
-        speed = 50/radius;
         setMoveAngle(moveAngle);
         resetForce();
         listener.accept(PacketFactory.createRadiusPacket(id, radius));

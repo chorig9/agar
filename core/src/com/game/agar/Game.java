@@ -24,7 +24,7 @@ public class Game extends ApplicationAdapter{
 
 	private SceneRenderer renderer;
 	private Camera camera;
-    private Handler handler;
+	private Handler handler;
 	private List<Entity> entities;
 	private Connection connection;
 	private Player player;
@@ -36,28 +36,19 @@ public class Game extends ApplicationAdapter{
 		player = new Player();
 		Map<Long, Ball> playerBalls = player.getBalls();
 
-		// TESTING
-		Ball initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), 10,0);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 100), 10,1);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() / 2 - 50), 10,2);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
 		connection = Connection.createConnectionTo("localhost", 1234);
 		Gdx.input.setInputProcessor(new Controller(camera, connection, player));
 
-		handler = new Handler(entities, playerBalls, connection);
+		handler = new Handler(entities, playerBalls);
 		connection.setCommunicationListener(handler::handleRequest);
 
 		connection.start();
-    }
+
+		handler.waitForFirstBall();
+	}
 
 	@Override
 	public void render () {

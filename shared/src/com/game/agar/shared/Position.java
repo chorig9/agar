@@ -25,24 +25,8 @@ public class Position {
         }
     }
 
-    @Override
-    public Position clone(){
+    public Position copy(){
         return new Position(x, y);
-    }
-
-
-    public static Position sum(Position a, Position b) {
-        return new Position(a.x + b.x, a.y + b.y);
-    }
-
-    public static double distanceBetween(Position a, Position b) {
-        return a.distanceTo(b);
-    }
-
-    public static Position vectorProjection(Position a, Position b) {
-        double multi = a.x * b.x + a.y * b.y;
-        double length = b.x * b.x + b.y * b.y;
-        return new Position(b.x * multi / length, b.y * multi / length);
     }
 
 }
