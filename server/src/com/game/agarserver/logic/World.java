@@ -26,10 +26,15 @@ public class World {
 
     private void initializeBalls(){
         Random generator = new Random();
-        for(int i = 0; i < width * height / 10000; i++){
+        Set<Position> foodPositions = new HashSet<Position>();
+        for(int i = 0; i < width * height / 20000; i++){
             int x = generator.nextInt(width);
             int y = generator.nextInt(height);
-            Entity entity = new Entity(new Position(x, y), 30);
+            if(!foodPositions.add(new Position(x,y)))
+                i--;
+        }
+        for(Position position : foodPositions) {
+            Entity entity = new Entity(position, 30);
             entity.setListener(broadcaster);
             food.add(entity);
         }
@@ -49,6 +54,7 @@ public class World {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println(food.size());
             }
         }).start();
     }
@@ -81,14 +87,14 @@ public class World {
         Ball initialBall = new Ball(findFreePosition(),100,user.getId());
         playerBalls.add(initialBall);
 
-        Position second = new Position(initialBall.position.x-300,initialBall.position.y-300);
+       /* Position second = new Position(initialBall.position.x-300,initialBall.position.y-300);
         initialBall = new Ball(second, 70,user.getId());
         playerBalls.add(initialBall);
 
         Position third = new Position(initialBall.position.x+600,initialBall.position.y+600);
         initialBall = new Ball(third, 120,user.getId());
         playerBalls.add(initialBall);
-
+*/
         balls.addAll(playerBalls);
 
         playerBalls.forEach(ball -> ball.setListener(broadcaster));
@@ -101,12 +107,24 @@ public class World {
                     synchronized (user) {
                         user.setTargetVector(new Position(json.getInt("x"), json.getInt("y")));
                     }
+                    break;
+                case "split_attempt":
+                    synchronized (user) {
+                        List<Ball> createdBalls = user.splitBalls();
+                        balls.addAll(createdBalls);
+                        playerBalls.addAll(createdBalls);
+                        setMovingAnglesForUserBalls(user);
+                        createdBalls.forEach(ball->ball.setListener(broadcaster));
+                        createdBalls.forEach(ball->user.sendPacket(PacketFactory.createAddBallPacket(ball)));
+                    }
             }
         });
 
         new Thread(() -> {
-            for(Entity entity : food){
-                user.sendPacket(PacketFactory.createAddFoodPacket(entity));
+            synchronized (this) {
+                for (Entity entity : food) {
+                    user.sendPacket(PacketFactory.createAddFoodPacket(entity));
+                }
             }
         }).start();
 
