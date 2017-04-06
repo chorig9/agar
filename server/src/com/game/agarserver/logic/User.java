@@ -5,6 +5,7 @@ import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User  {
@@ -43,6 +44,15 @@ public class User  {
 
     public List<Ball> getBalls(){   return balls;   }
     public long getId() {   return id;  }
+
+    public List<Ball> splitBalls(){
+        List<Ball> createdBalls = new ArrayList<>();
+        for(Ball ball : balls){
+            if(ball.getRadius()>100)
+                createdBalls.add(ball.splitAndGetNewBall());
+        }
+        return createdBalls;
+    }
 
     public void endConnection() {
         connection.end();

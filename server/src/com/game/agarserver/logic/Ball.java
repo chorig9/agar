@@ -5,12 +5,13 @@ import com.game.agarserver.tools.Vector;
 
 
 public class Ball extends Entity{
-
+    private static final double SPLITING_SPEED_MULTIPLIER = 3;
     private static long next_id = 0;
 
     private long id;
     private long ownerId;
     private double moveAngle = 0;
+    private double speedMultiplier = 1;
 
     private Position force = new Vector(0, 0);
 
@@ -32,6 +33,16 @@ public class Ball extends Entity{
         return moveAngle;
     }
 
+    public void setSpeedMultiplier(double acceleration){ this.speedMultiplier=acceleration;};
+    public double getSpeedMultiplier(){return speedMultiplier;}
+
+    public void loseAcceleration(){
+        if(speedMultiplier>1)
+            speedMultiplier -= 0.01;
+        else
+            speedMultiplier = 1;
+    }
+
     public void setMoveAngle(double angle){
         moveAngle = angle;
     }
@@ -41,8 +52,8 @@ public class Ball extends Entity{
     }
 
     public Position getMovementVector(){
-        double x = Math.cos(moveAngle) * getSpeed(); // + force.x;
-        double y = Math.sin(moveAngle) * getSpeed(); // + force.y;
+        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.x;
+        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.y;
 
         return new Position(x, y);
     }
@@ -54,6 +65,7 @@ public class Ball extends Entity{
     public void move(){
         position = getNextPosition();
         resetForce();
+        loseAcceleration();
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
@@ -98,5 +110,12 @@ public class Ball extends Entity{
         setMoveAngle(moveAngle);
         resetForce();
         listener.accept(PacketFactory.createRadiusPacket(id, radius));
+    }
+
+    public Ball splitAndGetNewBall(){
+        updateRadius(-getWeight()/2);
+        Ball newBall = new Ball(getNextPosition(),(int)getRadius(),ownerId);
+        newBall.setSpeedMultiplier(SPLITING_SPEED_MULTIPLIER);
+        return newBall;
     }
 }

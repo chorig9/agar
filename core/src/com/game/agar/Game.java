@@ -2,8 +2,6 @@ package com.game.agar;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
@@ -12,7 +10,6 @@ import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.shared.Connection;
-import com.game.agar.shared.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +51,7 @@ public class Game extends ApplicationAdapter{
 	public void render () {
 		camera.setPosition(player.getBiggestBall().getPosition());
 		renderer.renderFrame();
+		System.out.println(entities.size());
 	}
 
 	@Override
