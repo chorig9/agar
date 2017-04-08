@@ -7,7 +7,6 @@ import com.game.agar.tools.PositionConverger;
 public class Ball extends Entity {
 
     private long id;
-    private double moveAngle;
     private PositionConverger position;
     private DoubleConverger radius;
 
@@ -41,8 +40,4 @@ public class Ball extends Entity {
         double radius = getRadius();
         return (float)(Math.PI * Math.pow(radius,2));
     }
-
-    public double getMoveAngle(){ return moveAngle; }
-
-    public void setMoveAngle(double moveAngle){ this.moveAngle = moveAngle; }
 }

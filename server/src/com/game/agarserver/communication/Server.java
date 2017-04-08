@@ -10,7 +10,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException{
         ServerSocket serverSocket = new ServerSocket(1234);
-        World world = new World(500,500);
+        World world = new World(1000,1000);
 
         world.doStart();
 

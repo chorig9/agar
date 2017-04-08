@@ -6,7 +6,7 @@ import com.game.agar.shared.Position;
 public class Camera {
 
     private Position position;
-    private float zoom = 1;
+    private float zoom = 0.1f;
     private int width, height;
 
     public Camera(int width, int height){
@@ -22,6 +22,10 @@ public class Camera {
 
     public void setPosition(Position position){
         this.position = position;
+    }
+
+    public float getZoom(){
+        return zoom;
     }
 
     public Matrix4 getMatrix(){

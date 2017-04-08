@@ -2,8 +2,6 @@ package com.game.agar;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.game.agar.communication.Handler;
 import com.game.agar.control.Controller;
 import com.game.agar.entities.Ball;
@@ -12,7 +10,6 @@ import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.shared.Connection;
-import com.game.agar.shared.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +21,7 @@ public class Game extends ApplicationAdapter{
 
 	private SceneRenderer renderer;
 	private Camera camera;
-    private Handler handler;
+	private Handler handler;
 	private List<Entity> entities;
 	private Connection connection;
 	private Player player;
@@ -36,33 +33,25 @@ public class Game extends ApplicationAdapter{
 		player = new Player();
 		Map<Long, Ball> playerBalls = player.getBalls();
 
-		// TESTING
-		Ball initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), 10,0);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 100), 10,1);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-		initialBall = new Ball(new Position(Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() / 2 - 50), 10,2);
-		playerBalls.put(initialBall.getId(), initialBall);
-		entities.add(initialBall);
-
 		renderer = new SceneRenderer(camera, entities);
 		renderer.init();
 
 		connection = Connection.createConnectionTo("localhost", 1234);
 		Gdx.input.setInputProcessor(new Controller(camera, connection, player));
 
-		handler = new Handler(entities, playerBalls, connection);
+		handler = new Handler(entities, playerBalls);
 		connection.setCommunicationListener(handler::handleRequest);
 
 		connection.start();
-    }
+
+		handler.waitForFirstBall();
+	}
 
 	@Override
 	public void render () {
 		camera.setPosition(player.getBiggestBall().getPosition());
 		renderer.renderFrame();
+		System.out.println(entities.size());
 	}
 
 	@Override

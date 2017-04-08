@@ -15,12 +15,11 @@ public class Handler {
 
     private List<Entity> entities;
     private Map<Long, Ball> playerBalls;
-    private Connection connection;
+    private volatile boolean init = false;
 
-    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls,Connection connection) {
+    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls) {
         this.entities = entities;
         this.playerBalls = playerBalls;
-        this.connection = connection;
     }
 
     public void handleRequest(String request){
@@ -28,10 +27,20 @@ public class Handler {
 
         String action = json.getString("action");
         switch (action) {
-            case "add": {
+            case "add_food": {
                 Position position = new Position( json.getDouble("x"), json.getDouble("y"));
                 double radius = json.getDouble("radius");
                 entities.add(new Food(position, radius));
+                break;
+            }
+            case "add_ball": {
+                Position position = new Position( json.getDouble("x"), json.getDouble("y"));
+                double radius = json.getDouble("radius");
+                long id = json.getInt("id");
+                Ball ball = new Ball(position, radius, id);
+                entities.add(ball);
+                playerBalls.put(id, ball);
+                init = true;
                 break;
             }
             case "remove": {
@@ -53,23 +62,11 @@ public class Handler {
                 destination.setRadius(new_radius);
                 break;
             }
-            case "request": {
-                Long id = json.getLong("id");
-                Ball destination = playerBalls.get(id);
-                double angle = destination.getMoveAngle();
-                JSONObject answer = new JSONObject();
-                answer.put("action", "mouse_move");
-                answer.put("id",id);
-                answer.put("angle", angle);
-                answer.put("addition", "requestedRefresh");
-                try {
-                    connection.send(answer.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
         }
+    }
+
+    public void waitForFirstBall(){
+        while(!init);
     }
 
 }
