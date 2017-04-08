@@ -87,14 +87,6 @@ public class World {
         Ball initialBall = new Ball(findFreePosition(),100,user.getId());
         playerBalls.add(initialBall);
 
-       /* Position second = new Position(initialBall.position.x-300,initialBall.position.y-300);
-        initialBall = new Ball(second, 70,user.getId());
-        playerBalls.add(initialBall);
-
-        Position third = new Position(initialBall.position.x+600,initialBall.position.y+600);
-        initialBall = new Ball(third, 120,user.getId());
-        playerBalls.add(initialBall);
-*/
         balls.addAll(playerBalls);
 
         playerBalls.forEach(ball -> ball.setListener(broadcaster));

@@ -5,9 +5,11 @@ import com.game.agar.entities.Entity;
 import com.game.agar.entities.Food;
 import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
+import javafx.geometry.Pos;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +19,14 @@ public class Handler {
     private Map<Long, Ball> playerBalls;
     private volatile boolean init = false;
 
-    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls) {
+    private HashMap<Long, Position> vecs;
+    private HashMap<Long, Position> forc;
+
+    public Handler(List<Entity> entities, Map<Long, Ball> playerBalls, HashMap<Long, Position> vecs, HashMap<Long, Position> forc) {
         this.entities = entities;
         this.playerBalls = playerBalls;
+        this.vecs = vecs;
+        this.forc = forc;
     }
 
     public void handleRequest(String request){
@@ -27,6 +34,14 @@ public class Handler {
 
         String action = json.getString("action");
         switch (action) {
+            case "vector": {
+                long id = json.getLong("id");
+                Position v = new Position(json.getDouble("x"), json.getDouble("y"));
+                Position f = new Position(json.getDouble("fx"), json.getDouble("fy"));
+                vecs.put(id, v);
+                forc.put(id, f);
+                break;
+            }
             case "add_food": {
                 Position position = new Position( json.getDouble("x"), json.getDouble("y"));
                 double radius = json.getDouble("radius");

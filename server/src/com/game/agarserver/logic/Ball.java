@@ -2,6 +2,7 @@ package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
 import com.game.agarserver.tools.Vector;
+import org.json.JSONObject;
 
 
 public class Ball extends Entity{
@@ -33,8 +34,13 @@ public class Ball extends Entity{
         return moveAngle;
     }
 
-    public void setSpeedMultiplier(double acceleration){ this.speedMultiplier=acceleration;};
-    public double getSpeedMultiplier(){return speedMultiplier;}
+    public void setSpeedMultiplier(double acceleration){
+        this.speedMultiplier=acceleration;
+    }
+
+    public double getSpeedMultiplier(){
+        return speedMultiplier;
+    }
 
     public void loseAcceleration(){
         if(speedMultiplier>1)
@@ -52,8 +58,8 @@ public class Ball extends Entity{
     }
 
     public Position getMovementVector(){
-        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.x;
-        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.y;
+        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier());
+        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier());
 
         return new Position(x, y);
     }
@@ -64,8 +70,19 @@ public class Ball extends Entity{
 
     public void move(){
         position = getNextPosition();
-        resetForce();
         loseAcceleration();
+
+        JSONObject json  = new JSONObject();
+        json.put("action", "vector");
+        json.put("x", getMovementVector().x);
+        json.put("y", getMovementVector().y);
+        json.put("fx", force.x);
+        json.put("fy", force.y);
+        json.put("id", id);
+        listener.accept(json);
+
+
+        resetForce();
         listener.accept(PacketFactory.createPositionPacket(id, position));
     }
 
@@ -78,7 +95,12 @@ public class Ball extends Entity{
         double nextDistance = getNextPosition().distanceTo(otherObject.getPosition());
         boolean isBallAtCollisionCourse = nextDistance < distance;
 
-        return areEntitiesCloseEnough && isBallAtCollisionCourse;
+        boolean test = true;
+        if(otherObject instanceof Ball) {
+            Ball ball = (Ball) otherObject;
+            test = speedMultiplier == 1 && ball.speedMultiplier == 1;
+        }
+        return areEntitiesCloseEnough && isBallAtCollisionCourse && test;
     }
 
     public void eatFood(Entity food){
@@ -90,9 +112,16 @@ public class Ball extends Entity{
         if (ownerId == ball.getOwnerId()) {
             Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
             Position toBall = Vector.projection(getMovementVector(), pull);
+            Position fromBall = Vector.projection(ball.getMovementVector(), pull);
 
-            force.x += - toBall.x;
-            force.y += - toBall.y;
+            if(fromBall.x < 0 || fromBall.y < 0) {
+                force.x += -toBall.x;
+                force.y += -toBall.y;
+            }
+            else{
+                force.x += fromBall.x - toBall.x;
+                force.y += fromBall.y - toBall.y;
+            }
 
         } else {
             if (radius >= ball.radius) {

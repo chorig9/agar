@@ -10,11 +10,9 @@ import com.game.agar.entities.Player;
 import com.game.agar.rendering.Camera;
 import com.game.agar.rendering.SceneRenderer;
 import com.game.agar.shared.Connection;
+import com.game.agar.shared.Position;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Game extends ApplicationAdapter{
@@ -33,13 +31,16 @@ public class Game extends ApplicationAdapter{
 		player = new Player();
 		Map<Long, Ball> playerBalls = player.getBalls();
 
-		renderer = new SceneRenderer(camera, entities);
+		HashMap<Long, Position> vec = new HashMap<>();
+		HashMap<Long, Position> forc = new HashMap<>();
+
+		renderer = new SceneRenderer(camera, entities, vec, forc);
 		renderer.init();
 
 		connection = Connection.createConnectionTo("localhost", 1234);
 		Gdx.input.setInputProcessor(new Controller(camera, connection, player));
 
-		handler = new Handler(entities, playerBalls);
+		handler = new Handler(entities, playerBalls, vec, forc);
 		connection.setCommunicationListener(handler::handleRequest);
 
 		connection.start();
