@@ -9,12 +9,6 @@ public class Position {
         this.y = y;
     }
 
-    public double distanceTo(Position otherPosition){
-        double dx = x - otherPosition.x;
-        double dy = y - otherPosition.y;
-        return Math.sqrt(dx*dx + dy*dy);
-    }
-
     @Override
     public boolean equals(Object o) {
         if(!(o instanceof Position))

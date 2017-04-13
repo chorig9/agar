@@ -13,9 +13,9 @@ public class Ball extends Entity{
     private double moveAngle = 0;
     private double speedMultiplier = 1;
 
-    private Position force = new Vector(0, 0);
+    private Vector force = new Vector(0, 0);
 
-    public Ball(Position position, int radius, long ownerId){
+    public Ball(Vector position, int radius, long ownerId){
         super(position, radius);
         this.ownerId = ownerId;
         this.id = (next_id++) % Long.MAX_VALUE;
@@ -51,15 +51,15 @@ public class Ball extends Entity{
         force.x = force.y = 0;
     }
 
-    public Position getMovementVector(){
-        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.x;
-        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier()); // + force.y;
+    public Vector getMovementVector(){
+        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier());
+        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier());
 
-        return new Position(x, y);
+        return new Vector(x, y);
     }
 
-    public Position getNextPosition(){
-        return Vector.sum(position, getMovementVector(), force);
+    public Vector getNextPosition(){
+        return getMovementVector().sum(position).sum(force);
     }
 
     public void move(){

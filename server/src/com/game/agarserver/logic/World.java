@@ -1,6 +1,6 @@
 package com.game.agarserver.logic;
 
-import com.game.agar.shared.Position;
+import com.game.agarserver.tools.Vector;
 import com.game.agar.shared.Connection;
 import org.json.JSONObject;
 
@@ -26,14 +26,14 @@ public class World {
 
     private void initializeBalls(){
         Random generator = new Random();
-        Set<Position> foodPositions = new HashSet<Position>();
+        Set<Vector> foodPositions = new HashSet<Vector>();
         for(int i = 0; i < width * height / 20000; i++){
             int x = generator.nextInt(width);
             int y = generator.nextInt(height);
-            if(!foodPositions.add(new Position(x,y)))
+            if(!foodPositions.add(new Vector(x,y)))
                 i--;
         }
-        for(Position position : foodPositions) {
+        for(Vector position : foodPositions) {
             Entity entity = new Entity(position, 30);
             entity.setListener(broadcaster);
             food.add(entity);
@@ -72,9 +72,9 @@ public class World {
         });
     }
 
-    public Position findFreePosition(){
+    public Vector findFreePosition(){
         Random generator = new Random(); // TODO
-        return new Position(generator.nextInt(width), generator.nextInt(height));
+        return new Vector(generator.nextInt(width), generator.nextInt(height));
     }
 
     public void createNewPlayer(Socket socket){
@@ -87,14 +87,6 @@ public class World {
         Ball initialBall = new Ball(findFreePosition(),100,user.getId());
         playerBalls.add(initialBall);
 
-       /* Position second = new Position(initialBall.position.x-300,initialBall.position.y-300);
-        initialBall = new Ball(second, 70,user.getId());
-        playerBalls.add(initialBall);
-
-        Position third = new Position(initialBall.position.x+600,initialBall.position.y+600);
-        initialBall = new Ball(third, 120,user.getId());
-        playerBalls.add(initialBall);
-*/
         balls.addAll(playerBalls);
 
         playerBalls.forEach(ball -> ball.setListener(broadcaster));
@@ -105,7 +97,7 @@ public class World {
             switch(json.getString("action")){
                 case "mouse_update":
                     synchronized (user) {
-                        user.setTargetVector(new Position(json.getInt("x"), json.getInt("y")));
+                        user.setTargetVector(new Vector(json.getInt("x"), json.getInt("y")));
                     }
                     break;
                 case "split_attempt":
@@ -134,7 +126,7 @@ public class World {
     private void setMovingAnglesForUserBalls(User user){
         synchronized (user) {
             Ball centerBall = user.getBalls().stream().max((lhs, rhs) -> Double.compare(lhs.radius, rhs.radius)).get();
-            Position targetPosition = new Position(centerBall.getPosition().x + user.getTargetVector().x,
+            Vector targetPosition = new Vector(centerBall.getPosition().x + user.getTargetVector().x,
                     centerBall.getPosition().y + user.getTargetVector().y);
 
             user.getBalls().forEach(ball -> {

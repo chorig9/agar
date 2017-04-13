@@ -51,7 +51,6 @@ public class Game extends ApplicationAdapter{
 	public void render () {
 		camera.setPosition(player.getBiggestBall().getPosition());
 		renderer.renderFrame();
-		System.out.println(entities.size());
 	}
 
 	@Override

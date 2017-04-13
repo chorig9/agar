@@ -8,22 +8,23 @@ public class Vector extends Position{
         super(x, y);
     }
 
-    public double getLength(){
+    public double length(){
         return Math.sqrt(x * x + y * y);
     }
 
-    public static Position sum(Position ...vectors) {
-        Vector result = new Vector(0, 0);
-        for (Position vector : vectors) {
-            result.x += vector.x;
-            result.y += vector.y;
-        }
-
-        return result;
+    public double distanceTo(Position otherPosition){
+        double dx = x - otherPosition.x;
+        double dy = y - otherPosition.y;
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
-    public static double distanceBetween(Position a, Position b) {
-        return a.distanceTo(b);
+    public Vector sum(Position p) {
+        Vector result = new Vector(0, 0);
+
+        result.x = x + p.x;
+        result.y = y + p.y;
+
+        return result;
     }
 
     public static Vector projection(Position a, Position b) {
@@ -32,4 +33,8 @@ public class Vector extends Position{
         return new Vector(b.x * multi / length, b.y * multi / length);
     }
 
+    public double dotProduct(Position p){
+        return x * p.x + y * p.y;
+    }
 }
+
