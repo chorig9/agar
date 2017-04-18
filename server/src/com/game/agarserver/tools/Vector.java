@@ -7,7 +7,7 @@ public class Vector extends Position{
     public Vector(double x, double y) {
         super(x, y);
     }
-
+  
     public double distanceTo(Position otherPosition){
         double dx = x - otherPosition.x;
         double dy = y - otherPosition.y;
@@ -19,6 +19,7 @@ public class Vector extends Position{
 
         result.x = x + p.x;
         result.y = y + p.y;
+
 
         return result;
     }
@@ -33,4 +34,3 @@ public class Vector extends Position{
         return x * p.x + y * p.y;
     }
 }
-

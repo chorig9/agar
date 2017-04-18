@@ -2,7 +2,6 @@ package com.game.agarserver.logic;
 
 import com.game.agarserver.tools.Vector;
 
-
 public class Ball extends Entity{
     private static final double SPLITING_SPEED_MULTIPLIER = 3;
     private static long next_id = 0;
@@ -46,7 +45,7 @@ public class Ball extends Entity{
     public void setMoveAngle(double angle){
         moveAngle = angle;
     }
-
+  
     public Vector calculateMovementVector(){
         double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier());
         double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier());

@@ -26,6 +26,7 @@ public class World {
 
     private void initializeBalls(){
         Random generator = new Random();
+
         Set<Vector> foodPositions = new HashSet<Vector>();
         for(int i = 0; i < width * height / 20000; i++){
             int x = generator.nextInt(width);
@@ -64,7 +65,7 @@ public class World {
                     food.removeIf(ball::canEat);
         });
 
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < user.getBalls().size(); i++) {
             user.getBalls().forEach(ball -> {
                 balls.forEach(ball::checkAndHandleCollision);
             });
@@ -84,8 +85,8 @@ public class World {
         User user = new User(playerBalls,connection);
 
         Ball initialBall = new Ball(findFreePosition(),100,user.getId());
-        playerBalls.add(initialBall);
 
+        playerBalls.add(initialBall);
         balls.addAll(playerBalls);
 
         playerBalls.forEach(ball -> ball.setListener(broadcaster));
