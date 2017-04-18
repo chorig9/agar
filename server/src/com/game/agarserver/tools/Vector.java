@@ -8,10 +8,6 @@ public class Vector extends Position{
         super(x, y);
     }
 
-    public double length(){
-        return Math.sqrt(x * x + y * y);
-    }
-
     public double distanceTo(Position otherPosition){
         double dx = x - otherPosition.x;
         double dy = y - otherPosition.y;

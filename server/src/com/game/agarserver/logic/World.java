@@ -9,10 +9,10 @@ import java.util.*;
 
 public class World {
 
-    private List<Entity> food = new ArrayList<>();
-    private List<Ball> balls = new ArrayList<>();
+    private final List<Entity> food = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
     private volatile List<User> users = new ArrayList<>();
-    private Broadcaster broadcaster = new Broadcaster(users);
+    private final Broadcaster broadcaster = new Broadcaster(users);
     private int width, height;
 
     private boolean running;
@@ -54,22 +54,21 @@ public class World {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(food.size());
             }
         }).start();
     }
 
     private void handleUserBallCollisions(User user){
         user.getBalls().forEach(ball -> {
-            synchronized (ball) {
-                food.stream().filter(ball::isCollidingWith).forEach(ball::eatFood);
-                food.removeIf(ball::isCollidingWith);
-
-                balls.stream().
-                        filter(anotherBall -> ball != anotherBall && ball.isCollidingWith(anotherBall)).
-                        forEach(ball::handleCollision);
-            }
+                    food.forEach(ball::checkAndHandleEating);
+                    food.removeIf(ball::canEat);
         });
+
+        for(int i = 0; i < 100; i++) {
+            user.getBalls().forEach(ball -> {
+                balls.forEach(ball::checkAndHandleCollision);
+            });
+        }
     }
 
     public Vector findFreePosition(){
