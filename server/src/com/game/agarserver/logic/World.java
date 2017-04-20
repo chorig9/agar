@@ -1,7 +1,8 @@
 package com.game.agarserver.logic;
 
-import com.game.agar.shared.Position;
 import com.game.agar.shared.Connection;
+import com.game.agar.shared.Position;
+import com.game.agarserver.eventsystem.EventProcessor;
 import org.json.JSONObject;
 
 import java.net.Socket;
@@ -12,15 +13,47 @@ public class World {
     private List<Entity> food = new ArrayList<>();
     private List<Ball> balls = new ArrayList<>();
     private volatile List<User> users = new ArrayList<>();
-    private Broadcaster broadcaster = new Broadcaster(users);
+    private EventProcessor eventProcessor;
     private int width, height;
 
     private boolean running;
 
-    public World(int width, int height){
+    public List<Entity> getFood() {
+        return food;
+    }
+
+    public EventProcessor getEventProcessor() {
+        return eventProcessor;
+    }
+
+    public void setEventProcessor(EventProcessor eventProcessor) {
+        this.eventProcessor = eventProcessor;
+    }
+
+    public List<Ball> getBalls() {
+        return balls;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public World(int width, int height, EventProcessor eventProcessor){
         this.width = width;
         this.height = height;
-
+        this.eventProcessor = eventProcessor;
         initializeBalls();
     }
 
@@ -34,42 +67,9 @@ public class World {
                 i--;
         }
         for(Position position : foodPositions) {
-            Entity entity = new Entity(position, 30);
-            entity.setListener(broadcaster);
+            Entity entity = new Entity( position, 30);
             food.add(entity);
         }
-    }
-
-    public void doStart(){
-        running = true;
-
-        new Thread(()->{
-            while(running){
-                users.forEach(this::setMovingAnglesForUserBalls);
-                users.forEach(this::handleUserBallCollisions);
-                balls.forEach(Ball::move);
-
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(food.size());
-            }
-        }).start();
-    }
-
-    private void handleUserBallCollisions(User user){
-        user.getBalls().forEach(ball -> {
-            synchronized (ball) {
-                food.stream().filter(ball::isCollidingWith).forEach(ball::eatFood);
-                food.removeIf(ball::isCollidingWith);
-
-                balls.stream().
-                        filter(anotherBall -> ball != anotherBall && ball.isCollidingWith(anotherBall)).
-                        forEach(ball::handleCollision);
-            }
-        });
     }
 
     public Position findFreePosition(){
@@ -77,7 +77,7 @@ public class World {
         return new Position(generator.nextInt(width), generator.nextInt(height));
     }
 
-    public void createNewPlayer(Socket socket){
+    synchronized public void createNewPlayer(Socket socket){
         Connection connection = new Connection(socket);
         connection.start();
 
@@ -87,17 +87,8 @@ public class World {
         Ball initialBall = new Ball(findFreePosition(),100,user.getId());
         playerBalls.add(initialBall);
 
-       /* Position second = new Position(initialBall.position.x-300,initialBall.position.y-300);
-        initialBall = new Ball(second, 70,user.getId());
-        playerBalls.add(initialBall);
-
-        Position third = new Position(initialBall.position.x+600,initialBall.position.y+600);
-        initialBall = new Ball(third, 120,user.getId());
-        playerBalls.add(initialBall);
-*/
         balls.addAll(playerBalls);
 
-        playerBalls.forEach(ball -> ball.setListener(broadcaster));
         playerBalls.forEach(ball -> user.sendPacket(PacketFactory.createAddBallPacket(ball)));
 
         connection.setCommunicationListener(request -> {
@@ -114,7 +105,6 @@ public class World {
                         balls.addAll(createdBalls);
                         playerBalls.addAll(createdBalls);
                         setMovingAnglesForUserBalls(user);
-                        createdBalls.forEach(ball->ball.setListener(broadcaster));
                         createdBalls.forEach(ball->user.sendPacket(PacketFactory.createAddBallPacket(ball)));
                     }
             }
@@ -131,7 +121,7 @@ public class World {
         users.add(user);
     }
 
-    private void setMovingAnglesForUserBalls(User user){
+    public void setMovingAnglesForUserBalls(User user){
         synchronized (user) {
             Ball centerBall = user.getBalls().stream().max((lhs, rhs) -> Double.compare(lhs.radius, rhs.radius)).get();
             Position targetPosition = new Position(centerBall.getPosition().x + user.getTargetVector().x,
@@ -143,5 +133,6 @@ public class World {
             });
         }
     }
+
 
 }

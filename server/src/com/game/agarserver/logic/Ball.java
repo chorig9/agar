@@ -1,6 +1,8 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
+import com.game.agarserver.eventsystem.events.BallMoveEvent;
+import com.game.agarserver.eventsystem.events.BallRadiusChangeEvent;
 import com.game.agarserver.tools.Vector;
 
 
@@ -15,8 +17,8 @@ public class Ball extends Entity{
 
     private Position force = new Vector(0, 0);
 
-    public Ball(Position position, int radius, long ownerId){
-        super(position, radius);
+    public Ball(World world, Position position, int radius, long ownerId){
+        super(world, position, radius);
         this.ownerId = ownerId;
         this.id = (next_id++) % Long.MAX_VALUE;
     }
@@ -66,7 +68,7 @@ public class Ball extends Entity{
         position = getNextPosition();
         resetForce();
         loseAcceleration();
-        listener.accept(PacketFactory.createPositionPacket(id, position));
+        world.getEventProcessor().issueEvent(new BallMoveEvent(this, position));
     }
 
     // this method is called only for balls 'responsible' for collision, that is
@@ -109,12 +111,13 @@ public class Ball extends Entity{
         radius = Math.sqrt(radius * radius + massGained / Math.PI);
         setMoveAngle(moveAngle);
         resetForce();
-        listener.accept(PacketFactory.createRadiusPacket(id, radius));
+        //listener.accept(PacketFactory.createRadiusPacket(id, radius));
+        getWorld().getEventProcessor().issueEvent(new BallRadiusChangeEvent(this, radius));
     }
 
     public Ball splitAndGetNewBall(){
         updateRadius(-getWeight()/2);
-        Ball newBall = new Ball(getNextPosition(),(int)getRadius(),ownerId);
+        Ball newBall = new Ball(getWorld(), getNextPosition(),(int)getRadius(),ownerId);
         newBall.setSpeedMultiplier(SPLITING_SPEED_MULTIPLIER);
         return newBall;
     }

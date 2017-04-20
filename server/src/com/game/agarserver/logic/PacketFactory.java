@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class PacketFactory {
 
-    static JSONObject createPositionPacket(long id, Position position){
+    public static JSONObject createPositionPacket(long id, Position position){
         JSONObject json = new JSONObject();
         json.put("action", "move");
         json.put("id", id);
@@ -14,7 +14,7 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createRadiusPacket(long id, double radius){
+    public static JSONObject createRadiusPacket(long id, double radius){
         JSONObject json = new JSONObject();
         json.put("action", "radius_change");
         json.put("id", id);
@@ -22,7 +22,7 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createAddFoodPacket(Entity food){
+    public static JSONObject createAddFoodPacket(Entity food){
         JSONObject json = new JSONObject();
         json.put("action", "add_food");
         json.put("x", food.position.x);
@@ -31,7 +31,7 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createAddBallPacket(Ball ball){
+    public static JSONObject createAddBallPacket(Ball ball){
         JSONObject json = new JSONObject();
         json.put("action", "add_ball");
         json.put("x", ball.position.x);
@@ -41,7 +41,7 @@ public class PacketFactory {
         return json;
     }
 
-    static JSONObject createRemovePacket(Position position){
+    public static JSONObject createRemovePacket(Position position){
         JSONObject json = new JSONObject();
         json.put("action", "remove");
         json.put("x", position.x);

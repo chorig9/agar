@@ -1,27 +1,29 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
-import org.json.JSONObject;
-
-import java.util.function.Consumer;
+import com.game.agarserver.eventsystem.events.EntityDieEvent;
 
 public class Entity {
 
     Position position;
     double radius;
-    Consumer<JSONObject> listener;
+    World world;
 
     public Entity(Position position, double radius){
         this.position = position;
         this.radius = radius;
     }
 
-    public void setListener(Consumer<JSONObject> listener){
-        this.listener = listener;
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     public void die(){
-        listener.accept(PacketFactory.createRemovePacket(position));
+        world.getEventProcessor().issueEvent(new EntityDieEvent(this));
     }
 
     public double getWeight(){
