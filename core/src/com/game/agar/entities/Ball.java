@@ -6,14 +6,13 @@ import com.game.agar.tools.PositionConverger;
 
 public class Ball extends Entity {
 
-    private long id;
     private PositionConverger position;
     private DoubleConverger radius;
 
-    public Ball(Position position, double radius, long id) {
+    public Ball(Position position, double radius, long entityId) {
+        super(entityId);
         this.position = new PositionConverger(position, 100);
         this.radius = new DoubleConverger(radius, 100);
-        this.id = id;
     }
 
     public void setPosition(Position position){
@@ -33,8 +32,6 @@ public class Ball extends Entity {
     public double getRadius() {
         return radius.getValue();
     }
-
-    public long getId(){ return id; }
 
     public float getWeight() {
         double radius = getRadius();

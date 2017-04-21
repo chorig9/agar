@@ -10,7 +10,6 @@ public class Ball extends Entity{
     private static final double SPLITING_SPEED_MULTIPLIER = 3;
     private static long next_id = 0;
 
-    private long id;
     private long ownerId;
     private double moveAngle = 0;
     private double speedMultiplier = 1;
@@ -20,14 +19,11 @@ public class Ball extends Entity{
     public Ball(World world, Position position, int radius, long ownerId){
         super(world, position, radius);
         this.ownerId = ownerId;
-        this.id = (next_id++) % Long.MAX_VALUE;
     }
 
     public double getSpeed(){
         return 250 / radius;
     }
-
-    public long getId(){    return id;  }
 
     public long getOwnerId() {  return ownerId; }
 

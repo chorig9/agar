@@ -18,18 +18,18 @@ public class NetworkEventHandler extends EventHandler{
 
     @SubscribeEvent
     public void onEntityDie(EntityDieEvent event){
-        broadcaster.addPacketToSend(PacketFactory.createRemovePacket(event.getEntity().getPosition()));
+        broadcaster.addPacketToSend(PacketFactory.createRemovePacket(event.getEntity()));
     }
 
     @SubscribeEvent
     public void onBallMove(BallMoveEvent event){
         Ball ball = event.getBall();
-        broadcaster.addPacketToSend(PacketFactory.createPositionPacket(ball.getId(), ball.getPosition()));
+        broadcaster.addPacketToSend(PacketFactory.createPositionPacket(ball.getEntityId(), ball.getPosition()));
     }
 
     @SubscribeEvent
     public void onRadiusChange(BallRadiusChangeEvent event){
         Ball ball = event.getBall();
-        broadcaster.addPacketToSend(PacketFactory.createRadiusPacket(ball.getId(), ball.getRadius()));
+        broadcaster.addPacketToSend(PacketFactory.createRadiusPacket(ball.getEntityId(), ball.getRadius()));
     }
 }

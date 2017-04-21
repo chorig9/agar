@@ -7,7 +7,8 @@ public class Food extends Entity {
     private Position position;
     private double radius;
 
-    public Food(Position position, double radius) {
+    public Food(Position position, double radius, long entityId) {
+        super(entityId);
         this.position = position;
         this.radius = radius;
     }

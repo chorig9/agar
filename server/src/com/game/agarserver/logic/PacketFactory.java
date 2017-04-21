@@ -25,6 +25,7 @@ public class PacketFactory {
     public static JSONObject createAddFoodPacket(Entity food){
         JSONObject json = new JSONObject();
         json.put("action", "add_food");
+        json.put("id", food.getEntityId());
         json.put("x", food.position.x);
         json.put("y", food.position.y);
         json.put("radius", food.radius);
@@ -37,15 +38,14 @@ public class PacketFactory {
         json.put("x", ball.position.x);
         json.put("y", ball.position.y);
         json.put("radius", ball.radius);
-        json.put("id", ball.getId());
+        json.put("id", ball.getEntityId());
         return json;
     }
 
-    public static JSONObject createRemovePacket(Position position){
+    public static JSONObject createRemovePacket(Entity entity){
         JSONObject json = new JSONObject();
         json.put("action", "remove");
-        json.put("x", position.x);
-        json.put("y", position.y);
+        json.put("id", entity.getEntityId());
         return json;
     }
 
