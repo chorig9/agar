@@ -25,7 +25,7 @@ public class Broadcaster implements Consumer<JSONObject> {
     }
 
     @Override
-    public void accept(JSONObject packet) {
+    synchronized public void accept(JSONObject packet) {
         for(User user : users){
             // TODO - check if user is in close enough to see this event
 

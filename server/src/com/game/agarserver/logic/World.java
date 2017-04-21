@@ -2,9 +2,9 @@ package com.game.agarserver.logic;
 
 import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
+import com.game.agarserver.communication.CommunicationListener;
 import com.game.agarserver.eventsystem.EventProcessor;
 import com.game.agarserver.eventsystem.events.EntitySpawnEvent;
-import org.json.JSONObject;
 
 import java.net.Socket;
 import java.util.*;
@@ -66,7 +66,7 @@ public class World {
 
     private void initializeBalls(){
         Random generator = new Random();
-        Set<Position> foodPositions = new HashSet<Position>();
+        Set<Position> foodPositions = new HashSet<>();
         for(int i = 0; i < width * height / 20000; i++){
             int x = generator.nextInt(width);
             int y = generator.nextInt(height);
@@ -89,35 +89,18 @@ public class World {
         connection.start();
 
         List<Ball> playerBalls = new ArrayList<>();
-        User user = new User(playerBalls,connection);
+        User user = new User(playerBalls, connection);
 
-        Ball initialBall = new Ball(this, findFreePosition(),100,user.getId());
+        Ball initialBall = new Ball(this, findFreePosition(),100, user);
         playerBalls.add(initialBall);
 
         balls.addAll(playerBalls);
 
         playerBalls.forEach(ball -> user.sendPacket(PacketFactory.createAddBallPacket(ball)));
 
-        connection.setCommunicationListener(request -> {
-            JSONObject json = new JSONObject(request);
-            switch(json.getString("action")){
-                case "mouse_update":
-                    synchronized (user) {
-                        user.setTargetVector(new Position(json.getInt("x"), json.getInt("y")));
-                    }
-                    break;
-                case "split_attempt":
-                    synchronized (user) {
-                        List<Ball> createdBalls = user.splitBalls();
-                        balls.addAll(createdBalls);
-                        playerBalls.addAll(createdBalls);
-                        setMovingAnglesForUserBalls(user);
-                        createdBalls.forEach(ball->user.sendPacket(PacketFactory.createAddBallPacket(ball)));
-                    }
-            }
-        });
+        connection.setCommunicationListener(new CommunicationListener(user, this));
 
-        new Thread(() -> {
+        new Thread(() -> { //TODO
             synchronized (this) {
                 for (Entity entity : food) {
                     user.sendPacket(PacketFactory.createAddFoodPacket(entity));

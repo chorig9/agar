@@ -10,22 +10,22 @@ public class Ball extends Entity{
     private static final double SPLITING_SPEED_MULTIPLIER = 3;
     private static long next_id = 0;
 
-    private long ownerId;
+    private User owner;
     private double moveAngle = 0;
     private double speedMultiplier = 1;
 
     private Position force = new Vector(0, 0);
 
-    public Ball(World world, Position position, int radius, long ownerId){
+    public Ball(World world, Position position, int radius, User owner){
         super(world, position, radius);
-        this.ownerId = ownerId;
+        this.owner = owner;
     }
 
     public double getSpeed(){
         return 250 / radius;
     }
 
-    public long getOwnerId() {  return ownerId; }
+    public User getOwner() {  return owner; }
 
     public double getMoveAngle(){
         return moveAngle;
@@ -85,7 +85,7 @@ public class Ball extends Entity{
     }
 
     public void handleCollision(Ball ball){
-        if (ownerId == ball.getOwnerId()) {
+        if (owner == ball.getOwner()) {
             Position pull = new Position(ball.position.x-position.x, ball.position.y-position.y);
             Position toBall = Vector.projection(getMovementVector(), pull);
 
@@ -112,7 +112,7 @@ public class Ball extends Entity{
 
     public Ball splitAndGetNewBall(){
         updateRadius(-getWeight()/2);
-        Ball newBall = new Ball(getWorld(), getNextPosition(),(int)getRadius(),ownerId);
+        Ball newBall = new Ball(getWorld(), getNextPosition(),(int)getRadius(), owner);
         newBall.setSpeedMultiplier(SPLITING_SPEED_MULTIPLIER);
         return newBall;
     }
