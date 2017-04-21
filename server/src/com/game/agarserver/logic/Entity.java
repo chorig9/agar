@@ -8,10 +8,17 @@ public class Entity {
     Position position;
     double radius;
     World world;
+    long entityId;
 
-    public Entity(Position position, double radius){
+    public Entity(World world, Position position, double radius){
+        this.world = world;
         this.position = position;
         this.radius = radius;
+        this.entityId = createNextId();
+    }
+
+    public Entity(Position position, double radius){
+        this(null, position, radius);
     }
 
     public void setWorld(World world) {
@@ -33,5 +40,15 @@ public class Entity {
     public Position getPosition() {return position;}
 
     public double getRadius() {return radius;}
+
+    public long getEntityId(){
+        return entityId;
+    }
+
+    private static long currentId = 0;
+    public static long createNextId(){
+        currentId++;
+        return currentId;
+    }
 
 }

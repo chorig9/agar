@@ -111,7 +111,6 @@ public class Ball extends Entity{
         radius = Math.sqrt(radius * radius + massGained / Math.PI);
         setMoveAngle(moveAngle);
         resetForce();
-        //listener.accept(PacketFactory.createRadiusPacket(id, radius));
         getWorld().getEventProcessor().issueEvent(new BallRadiusChangeEvent(this, radius));
     }
 

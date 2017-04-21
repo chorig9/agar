@@ -5,8 +5,8 @@ import com.game.agarserver.logic.Ball;
 
 public class BallRadiusChangeEvent extends Event{
 
-    private Ball ball;
-    private double newRadius;
+    private final Ball ball;
+    private final double newRadius;
 
     public BallRadiusChangeEvent(Ball ball, double newRadius) {
         this.ball = ball;

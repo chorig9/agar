@@ -3,6 +3,7 @@ package com.game.agarserver.logic;
 import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
 import com.game.agarserver.eventsystem.EventProcessor;
+import com.game.agarserver.eventsystem.events.EntitySpawnEvent;
 import org.json.JSONObject;
 
 import java.net.Socket;
@@ -57,6 +58,12 @@ public class World {
         initializeBalls();
     }
 
+    public void spawnEntity(Entity entity){
+        entity.setWorld(this);//TODO
+        eventProcessor.issueEvent(new EntitySpawnEvent(entity));
+    }
+
+
     private void initializeBalls(){
         Random generator = new Random();
         Set<Position> foodPositions = new HashSet<Position>();
@@ -67,7 +74,7 @@ public class World {
                 i--;
         }
         for(Position position : foodPositions) {
-            Entity entity = new Entity( position, 30);
+            Entity entity = new Entity(this, position, 30);
             food.add(entity);
         }
     }
@@ -84,7 +91,7 @@ public class World {
         List<Ball> playerBalls = new ArrayList<>();
         User user = new User(playerBalls,connection);
 
-        Ball initialBall = new Ball(findFreePosition(),100,user.getId());
+        Ball initialBall = new Ball(this, findFreePosition(),100,user.getId());
         playerBalls.add(initialBall);
 
         balls.addAll(playerBalls);

@@ -6,11 +6,12 @@ import com.game.agarserver.logic.Ball;
 
 public class BallMoveEvent extends Event {
 
-    private Ball ball;
-    private Position position;
+    private final Ball ball;
+    private final Position position;
 
     public BallMoveEvent(Ball ball, Position position) {
         this.ball = ball;
+        this.position = position;
     }
 
     public Ball getBall() {

@@ -15,7 +15,7 @@ public class MainEventHandler extends EventHandler{
     }
 
     @SubscribeEvent
-    public void onFrame(FrameEvent event){
+    public void everyFrame(FrameEvent event){
         World world = event.getWorld();
         world.getUsers().forEach(world::setMovingAnglesForUserBalls);
         world.getUsers().forEach(user -> handleUserBallCollisions(user, world));
