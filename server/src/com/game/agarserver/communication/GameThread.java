@@ -4,7 +4,6 @@ package com.game.agarserver.communication;
 import com.game.agarserver.eventsystem.EventHandler;
 import com.game.agarserver.eventsystem.MainEventHandler;
 import com.game.agarserver.eventsystem.events.FrameEvent;
-import com.game.agarserver.logic.Broadcaster;
 import com.game.agarserver.logic.World;
 
 public class GameThread implements Runnable{

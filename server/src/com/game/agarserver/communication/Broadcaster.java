@@ -1,5 +1,6 @@
-package com.game.agarserver.logic;
+package com.game.agarserver.communication;
 
+import com.game.agarserver.logic.User;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ public class Broadcaster implements Consumer<JSONObject> {
     synchronized public void accept(JSONObject packet) {
         for(User user : users){
             // TODO - check if user is in close enough to see this event
-
             user.sendPacket(packet);
         }
     }

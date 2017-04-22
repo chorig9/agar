@@ -3,6 +3,7 @@ package com.game.agarserver.logic;
 import com.game.agar.shared.Position;
 import com.game.agarserver.eventsystem.EventProcessor;
 import com.game.agarserver.eventsystem.events.EntitySpawnEvent;
+import com.game.agarserver.eventsystem.events.PlayerConnectEvent;
 
 import java.util.*;
 
@@ -13,8 +14,6 @@ public class World {
     private final List<User> users;
     private EventProcessor eventProcessor;
     private int width, height;
-
-    private boolean running;
 
     public List<Entity> getFood() {
         return food;
@@ -44,10 +43,6 @@ public class World {
         return height;
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
     public World(List<User> users,EventProcessor eventProcessor, int width, int height){
         this.users = users;
         this.width = width;
@@ -60,7 +55,6 @@ public class World {
         entity.setWorld(this);//TODO
         eventProcessor.issueEvent(new EntitySpawnEvent(entity));
     }
-
 
     private void initializeBalls(){
         Random generator = new Random();
@@ -83,25 +77,18 @@ public class World {
     }
 
     synchronized public void addNewPlayer(User user){
-
         List<Ball> playerBalls = user.getBalls();
         Ball initialBall = new Ball(this, findFreePosition(),100, user);
         playerBalls.add(initialBall);
         balls.addAll(playerBalls);
         playerBalls.forEach(ball -> user.sendPacket(PacketFactory.createAddBallPacket(ball)));
 
-        new Thread(() -> { //TODO move this elsewhere
-            synchronized (this) {
-                for (Entity entity : food) {
-                    user.sendPacket(PacketFactory.createAddFoodPacket(entity));
-                }
-            }
-        }).start();
+        eventProcessor.issueEvent(new PlayerConnectEvent(user, this));
 
         users.add(user);
     }
 
-    public void setMovingAnglesForUserBalls(User user){
+    public void setMovingAnglesForUserBalls(User user){//TODO move out from World
         synchronized (user) {
             Ball centerBall = user.getBalls().stream().max((lhs, rhs) -> Double.compare(lhs.radius, rhs.radius)).get();
             Position targetPosition = new Position(centerBall.getPosition().x + user.getTargetVector().x,

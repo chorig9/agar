@@ -1,18 +1,16 @@
 package com.game.agarserver.eventsystem;
 
+import com.game.agarserver.eventsystem.events.FrameEndEvent;
 import com.game.agarserver.eventsystem.events.FrameEvent;
-import com.game.agarserver.logic.*;
+import com.game.agarserver.logic.Ball;
+import com.game.agarserver.logic.Entity;
+import com.game.agarserver.logic.User;
+import com.game.agarserver.logic.World;
 
 import java.util.List;
 
 public class MainEventHandler extends EventHandler{
 
-    private Broadcaster broadcaster;
-
-    public MainEventHandler(Broadcaster broadcaster) {
-        super();
-        this.broadcaster = broadcaster;
-    }
 
     @SubscribeEvent
     public void everyFrame(FrameEvent event){
@@ -20,7 +18,7 @@ public class MainEventHandler extends EventHandler{
         world.getUsers().forEach(world::setMovingAnglesForUserBalls);
         world.getUsers().forEach(user -> handleUserBallCollisions(user, world));
         world.getBalls().forEach(Ball::move);
-        broadcaster.sendQueuedPackets();
+        event.getEventProcessor().issueEvent(new FrameEndEvent(event.getWorld()));
     }
 
     public void handleUserBallCollisions(User user, World world){

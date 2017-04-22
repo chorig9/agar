@@ -1,10 +1,10 @@
 package com.game.agarserver.communication;
 
+
 import com.game.agar.shared.Connection;
 import com.game.agarserver.eventsystem.EventProcessor;
 import com.game.agarserver.eventsystem.MainEventHandler;
 import com.game.agarserver.eventsystem.NetworkEventHandler;
-import com.game.agarserver.logic.Broadcaster;
 import com.game.agarserver.logic.User;
 import com.game.agarserver.logic.World;
 
@@ -16,6 +16,7 @@ import java.util.List;
 public class Server {
 
     Thread gameThread, networkThread;
+    public NetworkManager networkManager;
     ServerSocket serverSocket;
     EventProcessor eventProcessor;
     Broadcaster broadcaster;
@@ -29,12 +30,12 @@ public class Server {
             eventProcessor = new EventProcessor();
             world = new World(users, eventProcessor, 1000, 1000);
             broadcaster = new Broadcaster(world.getUsers());
+            networkManager = new NetworkManager(null, broadcaster);
+            eventProcessor.addEventHandler(new MainEventHandler());
+            eventProcessor.addEventHandler(new NetworkEventHandler(networkManager));
 
-            eventProcessor.addEventHandler(new MainEventHandler(broadcaster));
-            eventProcessor.addEventHandler(new NetworkEventHandler(broadcaster));
-
-            //networkThread = new Thread(new NetworkThread(connections));
-           // networkThread.start();
+            networkThread = new Thread(networkManager);
+            networkThread.start();
             gameThread = new Thread(new GameThread(world));
             gameThread.start();
 
@@ -45,7 +46,6 @@ public class Server {
                 connection.start();
                 User user = new User(connection);
                 connection.setCommunicationListener(new CommunicationListener(user, world));
-
                 world.addNewPlayer(user);
             }
         }catch(Exception e){
@@ -53,6 +53,7 @@ public class Server {
         }
         finally{
             gameThread.interrupt();
+            networkThread.interrupt();
             try {
                 gameThread.join();
                 networkThread.join();
