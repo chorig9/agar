@@ -2,7 +2,7 @@ package com.game.agarserver.eventsystem.events;
 
 import com.game.agarserver.eventsystem.EventProcessor;
 
-public class Event {
+public abstract class Event {
     private EventProcessor eventProcessor;
 
     public Event() {

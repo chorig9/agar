@@ -1,22 +1,22 @@
 package com.game.agarserver.eventsystem;
 
+import com.game.agarserver.eventsystem.events.Event;
 import com.game.agarserver.eventsystem.events.FrameEvent;
 import com.game.agarserver.logic.*;
-
 import java.util.List;
+import java.util.function.Consumer;
 
-public class MainEventHandler extends EventHandler{
+public class MainEventHandler implements Consumer<Event> {
 
     private Broadcaster broadcaster;
 
     public MainEventHandler(Broadcaster broadcaster) {
-        super();
         this.broadcaster = broadcaster;
     }
 
-    @SubscribeEvent
-    public void everyFrame(FrameEvent event){
-        World world = event.getWorld();
+    @Override
+    public void accept(Event event){
+        World world = ((FrameEvent)event).getWorld();
         world.getUsers().forEach(world::setMovingAnglesForUserBalls);
         world.getUsers().forEach(user -> handleUserBallCollisions(user, world));
         world.getBalls().forEach(Ball::move);

@@ -3,11 +3,13 @@ package com.game.agarserver.communication;
 import com.game.agar.shared.Connection;
 import com.game.agarserver.eventsystem.EventProcessor;
 import com.game.agarserver.eventsystem.MainEventHandler;
-import com.game.agarserver.eventsystem.NetworkEventHandler;
-import com.game.agarserver.logic.Broadcaster;
-import com.game.agarserver.logic.User;
-import com.game.agarserver.logic.World;
+import com.game.agarserver.eventsystem.events.BallMoveEvent;
+import com.game.agarserver.eventsystem.events.BallRadiusChangeEvent;
+import com.game.agarserver.eventsystem.events.EntityDieEvent;
+import com.game.agarserver.eventsystem.events.FrameEvent;
+import com.game.agarserver.logic.*;
 
+import javax.swing.tree.ExpandVetoException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,11 +32,21 @@ public class Server {
             world = new World(users, eventProcessor, 1000, 1000);
             broadcaster = new Broadcaster(world.getUsers());
 
-            eventProcessor.addEventHandler(new MainEventHandler(broadcaster));
-            eventProcessor.addEventHandler(new NetworkEventHandler(broadcaster));
+            eventProcessor.addEventHandler(FrameEvent.class, new MainEventHandler(broadcaster));
+            eventProcessor.addEventHandler(EntityDieEvent.class, (event) -> {
+                broadcaster.addPacketToSend(PacketFactory.createRemovePacket(((EntityDieEvent)event).getEntity()));
+            });
+            eventProcessor.addEventHandler(BallMoveEvent.class, (event) -> {
+                Ball ball = ((BallMoveEvent)event).getBall();
+                broadcaster.addPacketToSend(PacketFactory.createPositionPacket(ball.getEntityId(), ball.getPosition()));
+            });
+            eventProcessor.addEventHandler(BallRadiusChangeEvent.class, (event) -> {
+                Ball ball = ((BallRadiusChangeEvent)event).getBall();
+                broadcaster.addPacketToSend(PacketFactory.createRadiusPacket(ball.getEntityId(), ball.getRadius()));
+            });
 
             //networkThread = new Thread(new NetworkThread(connections));
-           // networkThread.start();
+            // networkThread.start();
             gameThread = new Thread(new GameThread(world));
             gameThread.start();
 
