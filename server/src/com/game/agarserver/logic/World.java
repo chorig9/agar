@@ -9,13 +9,14 @@ import java.util.*;
 
 public class World {
 
-    private List<Entity> food = new ArrayList<>();
-    private List<Ball> balls = new ArrayList<>();
+    private final List<Food> food = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Entity> entities = new ArrayList<>();
     private final List<User> users;
     private EventProcessor eventProcessor;
     private int width, height;
 
-    public List<Entity> getFood() {
+    public List<Food> getFood() {
         return food;
     }
 
@@ -43,11 +44,17 @@ public class World {
         return height;
     }
 
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
     public World(List<User> users,EventProcessor eventProcessor, int width, int height){
         this.users = users;
         this.width = width;
         this.height = height;
         this.eventProcessor = eventProcessor;
+    }
+    public void initialize(){
         initializeBalls();
     }
 
@@ -66,8 +73,8 @@ public class World {
                 i--;
         }
         for(Position position : foodPositions) {
-            Entity entity = new Entity(this, position, 30);
-            food.add(entity);
+            Food foodEntity = new Food(this, position, 30);
+            spawnEntity(foodEntity);
         }
     }
 
@@ -77,15 +84,10 @@ public class World {
     }
 
     synchronized public void addNewPlayer(User user){
-        List<Ball> playerBalls = user.getBalls();
-        Ball initialBall = new Ball(this, findFreePosition(),100, user);
-        playerBalls.add(initialBall);
-        balls.addAll(playerBalls);
-        playerBalls.forEach(ball -> user.sendPacket(PacketFactory.createAddBallPacket(ball)));
-
-        eventProcessor.issueEvent(new PlayerConnectEvent(user, this));
-
         users.add(user);
+        Ball initialBall = new Ball(this, findFreePosition(),100, user);
+        this.spawnEntity(initialBall);
+        eventProcessor.issueEvent(new PlayerConnectEvent(user, this));
     }
 
     public void setMovingAnglesForUserBalls(User user){//TODO move out from World
@@ -100,6 +102,5 @@ public class World {
             });
         }
     }
-
 
 }

@@ -2,7 +2,6 @@ package com.game.agarserver.communication;
 
 import com.game.agar.shared.Position;
 import com.game.agarserver.logic.Ball;
-import com.game.agarserver.logic.PacketFactory;
 import com.game.agarserver.logic.User;
 import com.game.agarserver.logic.World;
 import org.json.JSONObject;
@@ -34,10 +33,8 @@ public class CommunicationListener implements Consumer<String> {
             case "split_attempt":
                 synchronized (user) {
                     List<Ball> createdBalls = user.splitBalls();
-                    world.getBalls().addAll(createdBalls);
-                    user.getBalls().addAll(createdBalls);
+                    createdBalls.forEach(world::spawnEntity);
                     world.setMovingAnglesForUserBalls(user);
-                    createdBalls.forEach(ball->user.sendPacket(PacketFactory.createAddBallPacket(ball)));
                 }
         }
     }

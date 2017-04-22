@@ -3,10 +3,7 @@ package com.game.agarserver.eventsystem;
 import com.game.agarserver.communication.Broadcaster;
 import com.game.agarserver.communication.NetworkManager;
 import com.game.agarserver.eventsystem.events.*;
-import com.game.agarserver.logic.Ball;
-import com.game.agarserver.logic.Entity;
-import com.game.agarserver.logic.PacketFactory;
-import com.game.agarserver.logic.World;
+import com.game.agarserver.logic.*;
 
 
 public class NetworkEventHandler extends EventHandler{
@@ -17,6 +14,16 @@ public class NetworkEventHandler extends EventHandler{
     public NetworkEventHandler( NetworkManager networkManager) {
         this.networkManager = networkManager;
         this.broadcaster = networkManager.getBroadcaster();
+    }
+
+    @SubscribeEvent
+    public void onEntitySpawn(EntitySpawnEvent event){
+       Entity entity = event.getEntity();
+        if(entity instanceof Ball){  //TODO implement a way to send information about spawned entity of any type
+            broadcaster.addPacketToSend(PacketFactory.createAddBallPacket((Ball)event.getEntity()));
+        }else if(entity instanceof Food){
+            broadcaster.addPacketToSend(PacketFactory.createAddFoodPacket((Food)event.getEntity()));
+        }
     }
 
     @SubscribeEvent

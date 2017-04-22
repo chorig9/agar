@@ -23,15 +23,11 @@ public class EventHandler {
         );
         methodStream.forEach(method -> {
             if(method.getParameterCount() != 1){
-                throw new RuntimeException("Metoda musi przyjmować 1 parametr");
+                throw new RuntimeException("Event handling method must take only 1 parameter");
             }
             Class parameterClass= method.getParameterTypes()[0];
             if(!Event.class.isAssignableFrom(parameterClass)){
-                throw new RuntimeException("Parametr metody musi dziedziczyć po klasie Event");
-            }
-            method.setAccessible(true);
-            if(!method.isAccessible()){
-                throw new RuntimeException("Metoda musi być publiczna");
+                throw new RuntimeException("Event handling method parameter must be an instance of Event");
             }
             classToMethodMap.put(parameterClass, method);
         });
@@ -43,8 +39,10 @@ public class EventHandler {
         if(method != null){
             try {
                 method.invoke(this, event);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
+            }catch(InvocationTargetException e){
+                throw new RuntimeException(e.getCause());
             }
         }
     }

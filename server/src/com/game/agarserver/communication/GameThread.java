@@ -19,6 +19,7 @@ public class GameThread implements Runnable{
 
     @Override
     public void run() {
+        world.initialize();
         while(!Thread.interrupted()){
             world.getEventProcessor().issueEvent(new FrameEvent(world));
             try {
