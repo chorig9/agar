@@ -1,19 +1,16 @@
 package com.game.agarserver.logic;
 
-import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
-import com.game.agarserver.communication.CommunicationListener;
 import com.game.agarserver.eventsystem.EventProcessor;
 import com.game.agarserver.eventsystem.events.EntitySpawnEvent;
 
-import java.net.Socket;
 import java.util.*;
 
 public class World {
 
     private List<Entity> food = new ArrayList<>();
     private List<Ball> balls = new ArrayList<>();
-    private volatile List<User> users = new ArrayList<>();
+    private final List<User> users;
     private EventProcessor eventProcessor;
     private int width, height;
 
@@ -51,7 +48,8 @@ public class World {
         return running;
     }
 
-    public World(int width, int height, EventProcessor eventProcessor){
+    public World(List<User> users,EventProcessor eventProcessor, int width, int height){
+        this.users = users;
         this.width = width;
         this.height = height;
         this.eventProcessor = eventProcessor;
@@ -84,23 +82,15 @@ public class World {
         return new Position(generator.nextInt(width), generator.nextInt(height));
     }
 
-    synchronized public void createNewPlayer(Socket socket){
-        Connection connection = new Connection(socket);
-        connection.start();
+    synchronized public void addNewPlayer(User user){
 
-        List<Ball> playerBalls = new ArrayList<>();
-        User user = new User(playerBalls, connection);
-
+        List<Ball> playerBalls = user.getBalls();
         Ball initialBall = new Ball(this, findFreePosition(),100, user);
         playerBalls.add(initialBall);
-
         balls.addAll(playerBalls);
-
         playerBalls.forEach(ball -> user.sendPacket(PacketFactory.createAddBallPacket(ball)));
 
-        connection.setCommunicationListener(new CommunicationListener(user, this));
-
-        new Thread(() -> { //TODO
+        new Thread(() -> { //TODO move this elsewhere
             synchronized (this) {
                 for (Entity entity : food) {
                     user.sendPacket(PacketFactory.createAddFoodPacket(entity));
