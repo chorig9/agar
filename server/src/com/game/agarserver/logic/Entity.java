@@ -1,17 +1,18 @@
 package com.game.agarserver.logic;
 
 import com.game.agar.shared.Position;
+import com.game.agarserver.tools.Vector;
 import org.json.JSONObject;
 
 import java.util.function.Consumer;
 
 public class Entity {
 
-    Position position;
+    Vector position;
     double radius;
     Consumer<JSONObject> listener;
 
-    public Entity(Position position, double radius){
+    public Entity(Vector position, double radius){
         this.position = position;
         this.radius = radius;
     }
