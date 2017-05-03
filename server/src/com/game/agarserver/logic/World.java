@@ -1,10 +1,9 @@
 package com.game.agarserver.logic;
 
-import com.game.agar.shared.Vector;
-import com.game.agar.shared.Connection;
-import org.json.JSONObject;
-
-import java.net.Socket;
+import com.game.agarserver.eventsystem.events.EntitySpawnEvent;
+import com.game.agarserver.eventsystem.events.PlayerConnectEvent;
+import com.game.agarserver.tools.Vector;
+import com.game.agarserver.eventsystem.EventProcessor;
 import java.util.*;
 
 public class World {

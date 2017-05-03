@@ -1,5 +1,7 @@
 package com.game.agarserver.logic;
 
+import com.game.agarserver.eventsystem.events.BallMoveEvent;
+import com.game.agarserver.eventsystem.events.BallRadiusChangeEvent;
 import com.game.agarserver.tools.Vector;
 
 
@@ -13,7 +15,7 @@ public class Ball extends Entity{
 
     private Vector movementVector = calculateMovementVector();
 
-    public Ball(World world, Position position, int radius, User owner){
+    public Ball(World world, Vector position, int radius, User owner){
         super(world, position, radius);
         this.owner = owner;
     }
@@ -87,7 +89,7 @@ public class Ball extends Entity{
 
     public void checkAndHandleCollision(Ball ball){
         if(isCollidingWith(ball)){
-            if (ownerId == ball.getOwnerId()) {
+            if (owner.getId() == ball.owner.getId()) {
                 handleSamePlayerCollision(ball);
             } else {
                 handleDifferentPlayerCollision(ball);

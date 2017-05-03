@@ -61,19 +61,18 @@ public class MainEventHandler extends EventHandler{
     }
 
     public void handleUserBallCollisions(User user, World world){
+        List<Food> food = world.getFood();
+        List<Ball> balls = world.getBalls();
+
         user.getBalls().forEach(ball -> {
-            List<Food> food = world.getFood();
-            List<Ball> balls = world.getBalls();
-            synchronized (ball) {
-                food.stream().filter(ball::isCollidingWith).forEach(ball::eatFood);
-                food.removeIf(ball::isCollidingWith);
-
-                balls.stream().
-                        filter(anotherBall -> ball != anotherBall && ball.isCollidingWith(anotherBall)).
-                        forEach(ball::handleCollision);
-            }
+            food.forEach(ball::checkAndHandleEating);
+            food.removeIf(ball::canEat);
         });
+
+        for(int i = 0; i < user.getBalls().size(); i++) {
+            user.getBalls().forEach(ball -> {
+                balls.forEach(ball::checkAndHandleCollision);
+            });
+        }
     }
-
-
 }

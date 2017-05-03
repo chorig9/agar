@@ -10,14 +10,14 @@ public class Entity {
     World world;
     long entityId;
 
-    public Entity(World world, Position position, double radius){
+    public Entity(World world, Vector position, double radius){
         this.world = world;
         this.position = position;
         this.radius = radius;
         this.entityId = createNextId();
     }
 
-    public Entity(Position position, double radius){
+    public Entity(Vector position, double radius){
         this(null, position, radius);
     }
 
@@ -37,7 +37,7 @@ public class Entity {
         return Math.PI * radius * radius;
     }
 
-    public Position getPosition() {return position;}
+    public Vector getPosition() {return position;}
 
     public double getRadius() {return radius;}
 
