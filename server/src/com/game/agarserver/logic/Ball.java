@@ -2,30 +2,27 @@ package com.game.agarserver.logic;
 
 import com.game.agarserver.tools.Vector;
 
+
 public class Ball extends Entity{
     private static final double SPLITING_SPEED_MULTIPLIER = 3;
     private static long next_id = 0;
 
-    private long id;
-    private long ownerId;
+    private User owner;
     private double moveAngle = 0;
     private double speedMultiplier = 1;
 
     private Vector movementVector = calculateMovementVector();
 
-    public Ball(Vector position, int radius, long ownerId){
-        super(position, radius);
-        this.ownerId = ownerId;
-        this.id = (next_id++) % Long.MAX_VALUE;
+    public Ball(World world, Position position, int radius, User owner){
+        super(world, position, radius);
+        this.owner = owner;
     }
 
     public double getSpeed(){
         return 250 / radius;
     }
 
-    public long getId(){    return id;  }
-
-    public long getOwnerId() {  return ownerId; }
+    public User getOwner() {  return owner; }
 
     public double getMoveAngle(){
         return moveAngle;
@@ -45,10 +42,10 @@ public class Ball extends Entity{
     public void setMoveAngle(double angle){
         moveAngle = angle;
     }
-  
-    public Vector calculateMovementVector(){
-        double x = Math.cos(moveAngle) * (getSpeed()*getSpeedMultiplier());
-        double y = Math.sin(moveAngle) * (getSpeed()*getSpeedMultiplier());
+
+    public Vector calculateMovementVector() {
+        double x = Math.cos(moveAngle) * (getSpeed() * getSpeedMultiplier());
+        double y = Math.sin(moveAngle) * (getSpeed() * getSpeedMultiplier());
 
         return new Vector(x, y);
     }
@@ -60,8 +57,7 @@ public class Ball extends Entity{
     public void move(){
         position = getNextPosition();
         loseAcceleration();
-        listener.accept(PacketFactory.createPositionPacket(id, position));
-
+        world.getEventProcessor().issueEvent(new BallMoveEvent(this, position));
         movementVector = calculateMovementVector();
     }
 
@@ -143,12 +139,12 @@ public class Ball extends Entity{
         radius = Math.sqrt(radius * radius + massGained / Math.PI);
         setMoveAngle(moveAngle);
         movementVector = calculateMovementVector();
-        listener.accept(PacketFactory.createRadiusPacket(id, radius));
+        getWorld().getEventProcessor().issueEvent(new BallRadiusChangeEvent(this, radius));
     }
 
     public Ball splitAndGetNewBall(){
         updateRadius(-getWeight()/2);
-        Ball newBall = new Ball(getNextPosition(),(int)getRadius(),ownerId);
+        Ball newBall = new Ball(getWorld(), getNextPosition(),(int)getRadius(), owner);
         newBall.setSpeedMultiplier(SPLITING_SPEED_MULTIPLIER);
         return newBall;
     }

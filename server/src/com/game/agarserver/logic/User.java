@@ -12,14 +12,13 @@ public class User  {
 
     private static long next_id = 0;
 
-    private Connection connection;
-    private List<Ball> balls;
+    private final Connection connection;
+    private final List<Ball> balls = new ArrayList<>();
     private Position targetVector;
     private int score;
     private long id;
 
-    public User(List<Ball> balls, Connection connection) {
-        this.balls = balls;
+    public User(Connection connection) {
         this.connection = connection;
         this.score = 0;
         this.id = (next_id++) % Long.MAX_VALUE;

@@ -1,28 +1,36 @@
 package com.game.agarserver.logic;
 
-import com.game.agar.shared.Position;
 import com.game.agarserver.tools.Vector;
-import org.json.JSONObject;
-
-import java.util.function.Consumer;
+import com.game.agarserver.eventsystem.events.EntityDieEvent;
 
 public class Entity {
 
     Vector position;
     double radius;
-    Consumer<JSONObject> listener;
+    World world;
+    long entityId;
 
-    public Entity(Vector position, double radius){
+    public Entity(World world, Position position, double radius){
+        this.world = world;
         this.position = position;
         this.radius = radius;
+        this.entityId = createNextId();
     }
 
-    public void setListener(Consumer<JSONObject> listener){
-        this.listener = listener;
+    public Entity(Position position, double radius){
+        this(null, position, radius);
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     public void die(){
-        listener.accept(PacketFactory.createRemovePacket(position));
+        world.getEventProcessor().issueEvent(new EntityDieEvent(this));
     }
 
     public double getWeight(){
@@ -32,5 +40,15 @@ public class Entity {
     public Position getPosition() {return position;}
 
     public double getRadius() {return radius;}
+
+    public long getEntityId(){
+        return entityId;
+    }
+
+    private static long currentId = 0;
+    public static long createNextId(){
+        currentId++;
+        return currentId;
+    }
 
 }

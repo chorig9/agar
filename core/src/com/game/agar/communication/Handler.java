@@ -3,11 +3,9 @@ package com.game.agar.communication;
 import com.game.agar.entities.Ball;
 import com.game.agar.entities.Entity;
 import com.game.agar.entities.Food;
-import com.game.agar.shared.Connection;
 import com.game.agar.shared.Position;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +28,8 @@ public class Handler {
             case "add_food": {
                 Position position = new Position( json.getDouble("x"), json.getDouble("y"));
                 double radius = json.getDouble("radius");
-                entities.add(new Food(position, radius));
+                long entityId = json.getLong("id");
+                entities.add(new Food(position, radius, entityId));
                 break;
             }
             case "add_ball": {
@@ -44,8 +43,8 @@ public class Handler {
                 break;
             }
             case "remove": {
-                Position position = new Position((float) json.getDouble("x"), (float) json.getDouble("y"));
-                entities.removeIf(e -> e.getPosition().equals(position));
+                long entityId = json.getLong("id");
+                entities.removeIf(e -> e.getEntityId() == entityId);
                 break;
             }
             case "move": {
@@ -67,6 +66,6 @@ public class Handler {
 
     public void waitForFirstBall(){
         while(!init);
-    }
+    } //Genialne xD
 
 }
