@@ -18,29 +18,27 @@ public class NetworkEventHandler extends EventHandler{
 
     @SubscribeEvent
     public void onEntitySpawn(EntitySpawnEvent event){
-       Entity entity = event.getEntity();
+        Entity entity = event.entity;
         if(entity instanceof Ball){  //TODO implement a way to send information about spawned entity of any type
-            broadcaster.addPacketToSend(PacketFactory.createAddBallPacket((Ball)event.getEntity()));
+            broadcaster.addPacketToSend(PacketFactory.createAddBallPacket((Ball)entity));
         }else if(entity instanceof Food){
-            broadcaster.addPacketToSend(PacketFactory.createAddFoodPacket((Food)event.getEntity()));
+            broadcaster.addPacketToSend(PacketFactory.createAddFoodPacket((Food)entity));
         }
     }
 
     @SubscribeEvent
     public void onEntityDie(EntityDieEvent event){
-        broadcaster.addPacketToSend(PacketFactory.createRemovePacket(event.getEntity()));
+        broadcaster.addPacketToSend(PacketFactory.createRemovePacket(event.entity));
     }
 
     @SubscribeEvent
     public void onBallMove(BallMoveEvent event){
-        Ball ball = event.getBall();
-        broadcaster.addPacketToSend(PacketFactory.createPositionPacket(ball.getEntityId(), ball.getPosition()));
+        broadcaster.addPacketToSend(PacketFactory.createPositionPacket(event.ball.getEntityId(), event.ball.getPosition()));
     }
 
     @SubscribeEvent
     public void onRadiusChange(BallRadiusChangeEvent event){
-        Ball ball = event.getBall();
-        broadcaster.addPacketToSend(PacketFactory.createRadiusPacket(ball.getEntityId(), ball.getRadius()));
+        broadcaster.addPacketToSend(PacketFactory.createRadiusPacket(event.ball.getEntityId(), event.ball.getRadius()));
     }
 
     @SubscribeEvent
@@ -50,11 +48,10 @@ public class NetworkEventHandler extends EventHandler{
 
     @SubscribeEvent
     public void onPlayerConnect(PlayerConnectEvent event){
-        final World world = event.getWorld();
         networkManager.addTask(() -> { //TODO replace this with a method which sends all the information about the world
-            synchronized (world) {
-                for (Entity entity : world.getFood()) {
-                    event.getPlayer().sendPacket(PacketFactory.createAddFoodPacket(entity));
+            synchronized (event.world) {
+                for (Entity entity : event.world.getFood()) {
+                    event.player.sendPacket(PacketFactory.createAddFoodPacket(entity));
                 }
             }
         });

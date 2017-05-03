@@ -9,9 +9,6 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Created by Wojtas on 2017-04-21.
- */
 public class CommunicationListener implements Consumer<String> {
     private final User user;
     private final World world;

@@ -32,13 +32,12 @@ public class NetworkManager implements Runnable{
 
     @Override
     public void run() {
-        synchronized (this){
-            while(!Thread.interrupted()){
-                if(!tasks.isEmpty()){
+        synchronized (this) {
+            while (!Thread.interrupted()) {
+                if (!tasks.isEmpty()) {
                     tasks.forEach(Runnable::run);
                     tasks.clear();
-                }
-                else{
+                } else {
                     try {
                         wait();
                     } catch (InterruptedException e) {

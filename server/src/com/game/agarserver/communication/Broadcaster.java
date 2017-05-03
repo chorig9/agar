@@ -21,7 +21,7 @@ public class Broadcaster implements Consumer<JSONObject> {
     }
 
     synchronized public void sendQueuedPackets(){
-        packets.forEach(this::accept);
+        packets.forEach(this);
         packets.clear();
     }
 

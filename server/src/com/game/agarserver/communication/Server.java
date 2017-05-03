@@ -15,13 +15,13 @@ import java.util.List;
 
 public class Server {
 
-    Thread gameThread, networkThread;
-    public NetworkManager networkManager;
-    ServerSocket serverSocket;
-    EventProcessor eventProcessor;
-    Broadcaster broadcaster;
-    World world;
-    List<User> users = new ArrayList<>();
+    private Thread gameThread, networkThread;
+    private NetworkManager networkManager;
+    private ServerSocket serverSocket;
+    private EventProcessor eventProcessor;
+    private Broadcaster broadcaster;
+    private World world;
+    private List<User> users = new ArrayList<>();
 
     public void run() {
         try {

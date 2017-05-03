@@ -13,11 +13,11 @@ public class MainEventHandler extends EventHandler{
 
     @SubscribeEvent
     public void everyFrame(FrameEvent event){
-        World world = event.getWorld();
+        World world = event.world;
         world.getUsers().forEach(world::setMovingAnglesForUserBalls);
         world.getUsers().forEach(user -> handleUserBallCollisions(user, world));
         world.getBalls().forEach(Ball::move);
-        event.getEventProcessor().issueEvent(new FrameEndEvent(event.getWorld()));
+        event.getEventProcessor().issueEvent(new FrameEndEvent(world));
         if(world.getUsers().size() > 0) {
             System.out.println(world.getFood().size());
         }
@@ -25,7 +25,7 @@ public class MainEventHandler extends EventHandler{
 
     @SubscribeEvent
     public void onEntitySpawn(EntitySpawnEvent event){
-        Entity entity = event.getEntity();
+        Entity entity = event.entity;
         World world = entity.getWorld();
 
         synchronized (world) {
@@ -43,7 +43,7 @@ public class MainEventHandler extends EventHandler{
 
     @SubscribeEvent
     private void onEntityDie(EntityDieEvent event){
-        Entity entity = event.getEntity();
+        Entity entity = event.entity;
         World world = entity.getWorld();
 
         synchronized (world){
